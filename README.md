@@ -1,5 +1,5 @@
 # go-fetch
-go-fetch is CLI tool to fetch the operative system information and replicates tools such as
+go-fetch is CLI tool to fetch the operative system information and replicate tools such as
 1. neofetch
 2. screenfetch
 3. pfetch
