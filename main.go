@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
-	"time"
+
+	"github.com/fatih/color"
 )
+
+type OSInformer interface {
+}
 
 type OSInformation struct {
 	Name               string
@@ -20,14 +24,16 @@ type OSInformation struct {
 }
 
 func main() {
-	now := time.Now()
 	currentOS := GetInfo()
-	fmt.Printf("Name: %s\n", currentOS.Name)
-	fmt.Printf("Host: %s\n", currentOS.Host)
-	fmt.Printf("Uptime: %s\n", currentOS.Uptime)
-	fmt.Printf("Packages: %s\n", currentOS.Packages)
-	fmt.Printf("Shell: %s\n", currentOS.Shell)
-	duration := time.Since(now)
-	fmt.Println("Took", duration, "to finished")
 
+	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Name:"), currentOS.Name)
+	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Host:"), currentOS.Host)
+	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Uptime:"), currentOS.Uptime)
+	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Packages:"), currentOS.Packages)
+	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Shell:"), currentOS.Shell)
+	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Resolution:"), currentOS.Resolution)
+	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Terminal:"), currentOS.Terminal)
+	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("CPU:"), currentOS.CPU)
+	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("GPU:"), currentOS.GPU)
+	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Memory:"), currentOS.Memory)
 }
