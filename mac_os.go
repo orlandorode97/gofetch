@@ -87,7 +87,7 @@ func GetOSVersion() (string, error) {
 	return executeCommand("uname", "-srm")
 }
 
-// GetOSVersion returns the name of the current OS, version and kernel version
+// GetHostname returns the hostname of the machine
 func GetHostname() (string, error) {
 	return os.Hostname()
 }
