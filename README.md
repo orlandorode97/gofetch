@@ -17,4 +17,5 @@ go-fetch is CLI tool to fetch the operative system information and replicate too
 9. Format  the uptime
 
 ## Current Output
-![Screen Shot 2021-06-18 at 19 12 29](https://user-images.githubusercontent.com/34588445/122625128-2244a680-d069-11eb-8bb3-359c763874e3.png)
+<img width="953" alt="Screen Shot 2021-06-20 at 1 43 28" src="https://user-images.githubusercontent.com/34588445/122664762-f6104f00-d168-11eb-8bc5-eefce809e546.png">
+
