@@ -7,6 +7,17 @@ import (
 )
 
 type OSInformer interface {
+	GetOSVersion() (string, error)
+	GetHostname() (string, error)
+	GetUptime() (string, error)
+	GetNumberPackages() (string, error)
+	GetShellInformation() (string, error)
+	GetResolution() (string, error)
+	GetDesktopEnvironment() (string, error)
+	GetTerminalInfo() (string, error)
+	GetCPU() (string, error)
+	GetGPU() (string, error)
+	GetMemoryUsage() (string, error)
 }
 
 type OSInformation struct {
@@ -32,6 +43,7 @@ func main() {
 	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Packages:"), currentOS.Packages)
 	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Shell:"), currentOS.Shell)
 	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Resolution:"), currentOS.Resolution)
+	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Desktop Env:"), currentOS.DesktopEnvironment)
 	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("Terminal:"), currentOS.Terminal)
 	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("CPU:"), currentOS.CPU)
 	fmt.Printf("\t\t\t\t %s %s\n", color.RedString("GPU:"), currentOS.GPU)
