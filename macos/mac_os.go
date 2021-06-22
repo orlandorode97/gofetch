@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"strings"
 
+	gofetch "github.com/OrlandoRomo/go-fetch"
 	"github.com/shirou/gopsutil/mem"
 )
 
@@ -18,12 +19,17 @@ var (
 
 //GetInfo parse all the OSInformation fields
 // TODO request OS information with go concurrency since it's taken around 2 o more to get simple information
-func GetInfo() *OSInformation {
-	currentOS := OSInformation{}
+func GetInfo() *gofetch.OSInformation {
+	currentOS := gofetch.OSInformation{}
+
+	if name, err := GetName(); err == nil {
+		name = strings.Replace(name, "\n", "", -1)
+		currentOS.Name = name
+	}
 
 	if info, err := GetOSVersion(); err == nil {
 		info = strings.Replace(info, "\n", "", -1)
-		currentOS.Name = info
+		currentOS.OS = info
 	}
 
 	if host, err := GetHostname(); err == nil {
@@ -80,6 +86,11 @@ func GetInfo() *OSInformation {
 
 	return &currentOS
 
+}
+
+// GetName returns the current user name
+func GetName() (string, error) {
+	return executeCommand("whoami")
 }
 
 // GetOSVersion returns the name of the current OS, version and kernel version
