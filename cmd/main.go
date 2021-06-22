@@ -1,13 +1,13 @@
-package main
+package cmd
 
 import (
 	"fmt"
 
-	macos "github.com/OrlandoRomo/go-fetch/macos"
+	macos "github.com/OrlandoRomo/gofetch/macos"
 	"github.com/fatih/color"
 )
 
-func main() {
+func InitCMD() {
 	currentOS := macos.GetInfo()
 	fmt.Printf("Welcome ~ %s@%s\n\n", color.RedString(currentOS.Name), color.RedString(currentOS.Host))
 	fmt.Printf("\t%s %s %s\n", color.RedString("os"), "~", currentOS.OS)

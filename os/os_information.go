@@ -1,4 +1,4 @@
-package main
+package os
 
 type OSInformer interface {
 	GetOSVersion() (string, error)

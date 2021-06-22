@@ -1,4 +1,4 @@
-package main
+package macos
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"strings"
 
-	gofetch "github.com/OrlandoRomo/go-fetch"
+	osinfo "github.com/OrlandoRomo/gofetch/os"
 	"github.com/shirou/gopsutil/mem"
 )
 
@@ -19,8 +19,8 @@ var (
 
 //GetInfo parse all the OSInformation fields
 // TODO request OS information with go concurrency since it's taken around 2 o more to get simple information
-func GetInfo() *gofetch.OSInformation {
-	currentOS := gofetch.OSInformation{}
+func GetInfo() *osinfo.OSInformation {
+	currentOS := osinfo.OSInformation{}
 
 	if name, err := GetName(); err == nil {
 		name = strings.Replace(name, "\n", "", -1)
