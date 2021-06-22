@@ -1,4 +1,4 @@
-module github.com/OrlandoRomo/go-fetch
+module github.com/OrlandoRomo/gofetch
 
 go 1.16
 
