@@ -1,154 +1,150 @@
 package macos
 
 import (
-	"bytes"
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 
 	osinfo "github.com/OrlandoRomo/gofetch/os"
 	"github.com/shirou/gopsutil/mem"
 )
 
-var (
-	cmd    *exec.Cmd
-	stdout bytes.Buffer
-	stderr bytes.Buffer
-)
+type MacOS struct {
+	osinfo.OSInformation
+}
 
 //GetInfo parse all the OSInformation fields
 // TODO request OS information with go concurrency since it's taken around 2 o more to get simple information
-func GetInfo() *osinfo.OSInformation {
-	currentOS := osinfo.OSInformation{}
+func GetInfo() *MacOS {
+	mac := MacOS{}
 
-	if name, err := GetName(); err == nil {
+	if name, err := mac.GetName(); err == nil {
 		name = strings.Replace(name, "\n", "", -1)
-		currentOS.Name = name
+		mac.Name = name
 	}
 
-	if info, err := GetOSVersion(); err == nil {
+	if info, err := mac.GetOSVersion(); err == nil {
 		info = strings.Replace(info, "\n", "", -1)
-		currentOS.OS = info
+		mac.OS = info
 	}
 
-	if host, err := GetHostname(); err == nil {
-		currentOS.Host = host
+	if host, err := mac.GetHostname(); err == nil {
+		mac.Host = host
 	}
 
-	if uptime, err := GetUptime(); err == nil {
+	if uptime, err := mac.GetUptime(); err == nil {
 		uptime = strings.Replace(uptime, "\r\n", "", -1)
 		uptimes := strings.Split(uptime, " ")
-		currentOS.Uptime = uptimes[4] // Refactor this
+		mac.Uptime = uptimes[4] // Refactor this
 	}
 
-	if packages, err := GetNumberPackages(); err == nil {
+	if packages, err := mac.GetNumberPackages(); err == nil {
 		packages = strings.TrimSpace(packages)
-		currentOS.Packages = packages
+		mac.Packages = packages
 	}
 
-	if shell, err := GetShellInformation(); err == nil {
+	if shell, err := mac.GetShellInformation(); err == nil {
 		shell = strings.Replace(shell, "\n", "", -1)
-		currentOS.Shell = shell
+		mac.Shell = shell
 	}
 
-	if resolution, err := GetResolution(); err == nil {
+	if resolution, err := mac.GetResolution(); err == nil {
 		resolutions := strings.Split(resolution, "Resolution: ")
 		resolution = strings.TrimSpace(resolutions[1])
-		currentOS.Resolution = resolution
+		mac.Resolution = resolution
 	}
 
-	if de, err := GetDesktopEnvironment(); err == nil {
-		currentOS.DesktopEnvironment = de
+	if de, err := mac.GetDesktopEnvironment(); err == nil {
+		mac.DesktopEnvironment = de
 	}
 
-	if terminal, err := GetTerminalInfo(); err == nil {
+	if terminal, err := mac.GetTerminalInfo(); err == nil {
 		terminal = strings.TrimSpace(terminal)
-		currentOS.Terminal = terminal
+		mac.Terminal = terminal
 	}
 
-	if cpuInfo, err := GetCPU(); err == nil {
+	if cpuInfo, err := mac.GetCPU(); err == nil {
 		cpu := strings.Split(cpuInfo, ": ")
 		cpuInfo = strings.Replace(cpu[1], "\n\r", "", -1)
 		cpuInfo = strings.TrimSpace(cpuInfo)
-		currentOS.CPU = cpuInfo
+		mac.CPU = cpuInfo
 	}
 
-	if gpu, err := GetGPU(); err == nil {
+	if gpu, err := mac.GetGPU(); err == nil {
 		gpus := strings.Split(gpu, "Chipset Model: ")
 		gpu = strings.TrimSpace(gpus[1])
-		currentOS.GPU = gpu
+		mac.GPU = gpu
 	}
 
-	if memory, err := GetMemoryUsage(); err == nil {
-		currentOS.Memory = memory
+	if memory, err := mac.GetMemoryUsage(); err == nil {
+		mac.Memory = memory
 	}
 
-	return &currentOS
+	return &mac
 
 }
 
 // GetName returns the current user name
-func GetName() (string, error) {
-	return executeCommand("whoami")
+func (mac *MacOS) GetName() (string, error) {
+	return osinfo.ExecuteCommand("whoami")
 }
 
 // GetOSVersion returns the name of the current OS, version and kernel version
-func GetOSVersion() (string, error) {
-	return executeCommand("uname", "-srm")
+func (mac *MacOS) GetOSVersion() (string, error) {
+	return osinfo.ExecuteCommand("uname", "-srm")
 }
 
 // GetHostname returns the hostname of the machine
-func GetHostname() (string, error) {
+func (mac *MacOS) GetHostname() (string, error) {
 	return os.Hostname()
 }
 
 // GetUptime returns the up time of the current OS
-func GetUptime() (string, error) {
-	return executeCommand("uptime")
+func (mac *MacOS) GetUptime() (string, error) {
+	return osinfo.ExecuteCommand("uptime")
 }
 
 // GetNumberPackages return the number of packages install by homebrew
-func GetNumberPackages() (string, error) {
+func (mac *MacOS) GetNumberPackages() (string, error) {
 	command := "brew list --formula | wc -l"
-	return executeCommand("bash", "-c", command)
+	return osinfo.ExecuteCommand("bash", "-c", command)
 }
 
 // GetShellInformation return the used shell and its version
-func GetShellInformation() (string, error) {
-	return executeCommand(os.ExpandEnv("$SHELL"), "--version")
+func (mac *MacOS) GetShellInformation() (string, error) {
+	return osinfo.ExecuteCommand(os.ExpandEnv("$SHELL"), "--version")
 }
 
 // GetResolution returns the resolution of thee current monitor
-func GetResolution() (string, error) {
+func (mac *MacOS) GetResolution() (string, error) {
 	command := "system_profiler SPDisplaysDataType  | grep Resolution"
-	return executeCommand("bash", "-c", command)
+	return osinfo.ExecuteCommand("bash", "-c", command)
 }
 
 // GetDesktopEnvironment returns the resolution of thee current monitor
-func GetDesktopEnvironment() (string, error) {
+func (mac *MacOS) GetDesktopEnvironment() (string, error) {
 	return "Aqua", nil
 }
 
 // GetTerminalInfo get the current terminal name
-func GetTerminalInfo() (string, error) {
-	return executeCommand("echo", os.ExpandEnv("$TERM_PROGRAM"))
+func (mac *MacOS) GetTerminalInfo() (string, error) {
+	return osinfo.ExecuteCommand("echo", os.ExpandEnv("$TERM_PROGRAM"))
 }
 
 // GetCPU returns the name of th CPU
-func GetCPU() (string, error) {
+func (mac *MacOS) GetCPU() (string, error) {
 	command := "sysctl -a | grep machdep.cpu.brand_string"
-	return executeCommand("bash", "-c", command)
+	return osinfo.ExecuteCommand("bash", "-c", command)
 }
 
 // GetGPU returns the name of the GPU
-func GetGPU() (string, error) {
+func (mac *MacOS) GetGPU() (string, error) {
 	command := "system_profiler SPDisplaysDataType | grep 'Chipset Model'"
-	return executeCommand("bash", "-c", command)
+	return osinfo.ExecuteCommand("bash", "-c", command)
 }
 
 // GetMemoryUsage returns the memory usage of the computer
-func GetMemoryUsage() (string, error) {
+func (mac *MacOS) GetMemoryUsage() (string, error) {
 	memStat, err := mem.VirtualMemory()
 	if err != nil {
 		return "", err
@@ -156,18 +152,4 @@ func GetMemoryUsage() (string, error) {
 	total := memStat.Total / (1024 * 1024)
 	used := memStat.Used / (1024 * 1024)
 	return fmt.Sprintf("%v MB / %v MB", used, total), nil
-}
-
-//executeCommand executes the command with arguments as well reset the stderr and stdout
-func executeCommand(command string, args ...string) (string, error) {
-	// Reset stdout and stderr if previous commands were run
-	stdout.Reset()
-	stderr.Reset()
-	cmd = exec.Command(command, args...)
-	cmd.Stderr = &stderr
-	cmd.Stdout = &stdout
-
-	err := cmd.Run()
-
-	return stdout.String(), err
 }
