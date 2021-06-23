@@ -1,5 +1,16 @@
 package os
 
+import (
+	"bytes"
+	"os/exec"
+)
+
+var (
+	cmd    *exec.Cmd
+	stdout bytes.Buffer
+	stderr bytes.Buffer
+)
+
 type OSInformer interface {
 	GetOSVersion() (string, error)
 	GetHostname() (string, error)
@@ -27,4 +38,18 @@ type OSInformation struct {
 	CPU                string
 	GPU                string
 	Memory             string
+}
+
+//ExecuteCommand executes the command with arguments as well reset the stderr and stdout
+func ExecuteCommand(command string, args ...string) (string, error) {
+	// Reset stdout and stderr if previous commands were run
+	stdout.Reset()
+	stderr.Reset()
+	cmd = exec.Command(command, args...)
+	cmd.Stderr = &stderr
+	cmd.Stdout = &stdout
+
+	err := cmd.Run()
+
+	return stdout.String(), err
 }
