@@ -3,6 +3,8 @@ package linux
 import (
 	"fmt"
 	"os"
+	"regexp"
+	"strings"
 
 	osinfo "github.com/OrlandoRomo/gofetch/os"
 	"github.com/shirou/gopsutil/mem"
@@ -11,9 +13,13 @@ import (
 type PackageManager string
 type Command string
 
-var distrosPackages map[PackageManager]Command
+var (
+	distrosPackages map[PackageManager]Command
+	regexGPU        *regexp.Regexp
+	regexPackages   *regexp.Regexp
+)
 
-const NetPackage = `which {xbps-install,apk,apt,pacman,nix,yum,rpm,dpkg,emerge} 2>/dev/null | grep -v "not found" | awk -F/ 'NR==1{print $NF}')"`
+const NetPackage = `which {xbps-install,apk,apt,pacman,nix,yum,rpm,emerge} 2>/dev/null | grep -v "not found"`
 
 func init() {
 	distrosPackages = map[PackageManager]Command{
@@ -26,6 +32,8 @@ func init() {
 		"rpm":          "rpm -qa | wc -l",
 		"emerge":       "qlist -I | wc -l",
 	}
+	regexGPU = regexp.MustCompile(`(Intel|Advanced|NVIDIA|MCST|Virtual Box)([^\(|\(|\\]+)`)
+	regexPackages = regexp.MustCompile(`[^/]*$`)
 }
 
 type Linux struct {
@@ -34,6 +42,65 @@ type Linux struct {
 
 func GetInfo() *Linux {
 	linux := Linux{}
+	if name, err := linux.GetName(); err == nil {
+		linux.Name = name
+	}
+
+	if info, err := linux.GetOSVersion(); err == nil {
+		linux.OS = info
+	}
+
+	if host, err := linux.GetHostname(); err == nil {
+		linux.Host = host
+	}
+
+	if uptime, err := linux.GetUptime(); err == nil {
+		uptime = strings.Replace(uptime, "\r\n", "", -1)
+		uptimes := strings.Split(uptime, " ")
+		linux.Uptime = uptimes[4] // Refactor this
+	}
+
+	if packages, err := linux.GetNumberPackages(); err == nil {
+		linux.Packages = packages
+	}
+
+	if shell, err := linux.GetShellInformation(); err == nil {
+		linux.Shell = shell
+	}
+
+	if resolution, err := linux.GetResolution(); err == nil {
+		resolutions := strings.Split(resolution, "dimensions: ")
+		resolution = strings.TrimSpace(resolutions[1])
+		linux.Resolution = resolution
+	}
+
+	if de, err := linux.GetDesktopEnvironment(); err == nil {
+		linux.DesktopEnvironment = de
+	}
+
+	if terminal, err := linux.GetTerminalInfo(); err == nil {
+		terminal = strings.TrimSpace(terminal)
+		linux.Terminal = terminal
+	}
+
+	if cpuInfo, err := linux.GetCPU(); err == nil {
+		cpu := strings.Split(cpuInfo, ": ")
+		cpuInfo = strings.Replace(cpu[1], "\n\r", "", -1)
+		cpuInfo = strings.TrimSpace(cpuInfo)
+		linux.CPU = cpuInfo
+	}
+
+	if gpu, err := linux.GetGPU(); err == nil {
+		if regexGPU.MatchString(gpu) {
+			gpu = regexGPU.FindString(gpu)
+			linux.GPU = gpu
+		}
+	}
+
+	if memory, err := linux.GetMemoryUsage(); err == nil {
+		linux.Memory = memory
+	}
+
 	return &linux
 }
 
@@ -47,7 +114,7 @@ func (l *Linux) GetOSVersion() (string, error) {
 	return osinfo.ExecuteCommand("uname", "-srm")
 }
 
-// GetHostname returns the hostname of the machine
+// GetHostname returns the hostname of the linuxhine
 func (l *Linux) GetHostname() (string, error) {
 	return os.Hostname()
 }
@@ -59,9 +126,13 @@ func (l *Linux) GetUptime() (string, error) {
 
 // GetNumberPackages return the number of packages install by homebrew
 func (l *Linux) GetNumberPackages() (string, error) {
-	packageManager, err := osinfo.ExecuteCommand("bash", "-c", NetPackage)
+	packageManager, err := osinfo.ExecuteCommand(`bash`, `-c`, NetPackage)
 	if err != nil {
 		return "", err
+	}
+
+	if regexPackages.MatchString(packageManager) {
+		packageManager = regexPackages.FindString(packageManager)
 	}
 
 	name, ok := distrosPackages[PackageManager(packageManager)]
@@ -96,13 +167,13 @@ func (l *Linux) GetTerminalInfo() (string, error) {
 
 // GetCPU returns the name of th CPU
 func (l *Linux) GetCPU() (string, error) {
-	command := "sysctl -a | grep machdep.cpu.brand_string"
+	command := "lscpu | grep 'Model name:'"
 	return osinfo.ExecuteCommand("bash", "-c", command)
 }
 
 // GetGPU returns the name of the GPU
 func (l *Linux) GetGPU() (string, error) {
-	command := "system_profiler SPDisplaysDataType | grep 'Chipset Model'"
+	command := "lspci -v | grep 'VGA\\|Display\\|3D'"
 	return osinfo.ExecuteCommand("bash", "-c", command)
 }
 

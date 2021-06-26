@@ -19,12 +19,10 @@ func GetInfo() *MacOS {
 	mac := MacOS{}
 
 	if name, err := mac.GetName(); err == nil {
-		name = strings.Replace(name, "\n", "", -1)
 		mac.Name = name
 	}
 
 	if info, err := mac.GetOSVersion(); err == nil {
-		info = strings.Replace(info, "\n", "", -1)
 		mac.OS = info
 	}
 
@@ -44,7 +42,6 @@ func GetInfo() *MacOS {
 	}
 
 	if shell, err := mac.GetShellInformation(); err == nil {
-		shell = strings.Replace(shell, "\n", "", -1)
 		mac.Shell = shell
 	}
 

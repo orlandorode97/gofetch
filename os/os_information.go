@@ -3,6 +3,7 @@ package os
 import (
 	"bytes"
 	"os/exec"
+	"strings"
 )
 
 var (
@@ -51,5 +52,5 @@ func ExecuteCommand(command string, args ...string) (string, error) {
 
 	err := cmd.Run()
 
-	return stdout.String(), err
+	return strings.TrimSuffix(stdout.String(), "\n"), err
 }

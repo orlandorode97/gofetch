@@ -3,12 +3,13 @@ package cmd
 import (
 	"fmt"
 
-	macos "github.com/OrlandoRomo/gofetch/macos"
+	// macos "github.com/OrlandoRomo/gofetch/macos"
+	"github.com/OrlandoRomo/gofetch/linux"
 	"github.com/fatih/color"
 )
 
 func InitCMD() {
-	currentOS := macos.GetInfo()
+	currentOS := linux.GetInfo()
 	fmt.Printf("\nWelcome ~ %s@%s\n\n", color.RedString(currentOS.Name), color.RedString(currentOS.Host))
 	fmt.Printf("\t%s %s %s\n", color.RedString("os"), "~", currentOS.OS)
 	fmt.Printf("\t%s %s %s\n", color.GreenString("host"), "~", currentOS.Host)
