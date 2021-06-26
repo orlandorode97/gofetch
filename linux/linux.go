@@ -84,7 +84,7 @@ func (l *Linux) GetResolution() (string, error) {
 	return osinfo.ExecuteCommand("bash", "-c", command)
 }
 
-// GetDesktopEnvironment returns the resolution of thee current monitor
+// GetDesktopEnvironment returns the resolution of the current monitor
 func (l *Linux) GetDesktopEnvironment() (string, error) {
 	return "Aqua", nil
 }
