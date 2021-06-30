@@ -19,6 +19,7 @@ var (
 	regexPackages   *regexp.Regexp
 )
 
+// command to found the binary file of the current package manager
 const NetPackage = `which {xbps-install,apk,apt,pacman,nix,yum,rpm,emerge} 2>/dev/null | grep -v "not found"`
 
 func init() {
