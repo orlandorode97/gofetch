@@ -17,6 +17,11 @@ func (m *MockMacOS) GetName() (string, error) {
 	return args.Get(0).(string), args.Error(1)
 }
 
+func (m *MockMacOS) GetOSVersion() (string, error) {
+	args := m.Called()
+	return args.Get(0).(string), args.Error(1)
+}
+
 func Test_GetName(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		mockMac := new(MockMacOS)
@@ -34,8 +39,15 @@ func Test_GetName(t *testing.T) {
 		assert.Error(t, err)
 		mockMac.AssertExpectations(t)
 	})
-	t.Run("", func(t *testing.T) {
+}
 
+func Test_GetOSVersion(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		mockMac := new(MockMacOS)
+		mockMac.On("GetOSVersion", mock.Anything).Return("Darwin 20.5.0 x86_64", nil)
+		osVersion, errMock := mockMac.GetOSVersion()
+		assert.Nil(t, errMock)
+		assert.NotNil(t, osVersion)
+		mockMac.AssertExpectations(t)
 	})
-
 }
