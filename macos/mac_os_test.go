@@ -50,4 +50,12 @@ func Test_GetOSVersion(t *testing.T) {
 		assert.NotNil(t, osVersion)
 		mockMac.AssertExpectations(t)
 	})
+	t.Run("error after getting os version", func(t *testing.T) {
+		mockMac := new(MockMacOS)
+		mockMac.On("GetOSVersion").Return("", errors.New("error trying to get the macos os version"))
+		osVersion, err := mockMac.GetOSVersion()
+		assert.Equal(t, "", osVersion, "os version should be empty")
+		assert.Error(t, err)
+		mockMac.AssertExpectations(t)
+	})
 }
