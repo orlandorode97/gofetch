@@ -34,5 +34,8 @@ func Test_GetName(t *testing.T) {
 		assert.Error(t, err)
 		mockMac.AssertExpectations(t)
 	})
+	t.Run("", func(t *testing.T) {
+
+	})
 
 }
