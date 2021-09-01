@@ -132,13 +132,13 @@ func PrintInfo(informer OSInformer) {
 	}()
 	go func() {
 		if memoryUsage, err := informer.GetMemoryUsage(); err == nil {
-			fmt.Printf("%s %s %s\n\n", Red.Sprint("memory"), "~", memoryUsage)
+			fmt.Printf("%s %s %s\n", Red.Sprint("memory"), "~", memoryUsage)
 		}
 		waitGroup.Done()
 	}()
 	waitGroup.Wait()
 	// Dots
-	fmt.Printf("%s", Red.Sprint("○"))
+	fmt.Printf("\n%s", Red.Sprint("○"))
 	fmt.Printf("     %s", Green.Sprint("○"))
 	fmt.Printf("     %s", Blue.Sprint("○"))
 	fmt.Printf("     %s", Yellow.Sprint("○"))
