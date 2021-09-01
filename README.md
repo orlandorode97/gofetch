@@ -5,7 +5,7 @@ go-fetch is CLI tool to fetch the operative system information and replicate too
 3. pfetch
 
 ## TODO
-**Retrieve the following information** for Linux, Mac and Windows
+**Retrieve the following information** for Windows
 1. Resolution
 2. DesktopEnvironment
 3. Terminal
