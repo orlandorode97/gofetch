@@ -43,7 +43,7 @@ func (mac *MacOS) GetUptime() (string, error) {
 
 // GetNumberPackages return the number of packages install by homebrew
 func (mac *MacOS) GetNumberPackages() (string, error) {
-	command := "brew list --formula | wc -l"
+	command := "ls /usr/local/Cellar/ | wc -l"
 	packages, err := osinfo.ExecuteCommand("bash", "-c", command)
 	if err != nil {
 		return "", err

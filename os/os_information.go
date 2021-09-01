@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+	"sync"
 
 	"github.com/fatih/color"
 )
@@ -67,42 +68,72 @@ func ExecuteCommand(command string, args ...string) (string, error) {
 
 func PrintInfo(informer OSInformer) {
 
+	waitGroup := sync.WaitGroup{}
+
+	waitGroup.Add(9)
 	if name, err := informer.GetName(); err == nil {
 		fmt.Printf("%s", Red.Sprint(name))
 	}
 	if host, err := informer.GetHostname(); err == nil {
 		fmt.Printf("@%s\n", Red.Sprint(host))
 	}
-
 	fmt.Printf("%s %s %s %s %s\n\n", Red.Sprint("X"), Green.Sprint("────"), Yellow.Sprint("X"), Green.Sprint("────"), Blue.Sprint("X"))
 
-	if uptime, err := informer.GetUptime(); err == nil {
-		fmt.Printf("%s %s %s\n", Cyan.Sprint("uptime"), "~", uptime)
-	}
-	if numPackages, err := informer.GetNumberPackages(); err == nil {
-		fmt.Printf("%s %s %s\n", Blue.Sprint("packages"), "~", numPackages)
-	}
-	if shell, err := informer.GetShellInformation(); err == nil {
-		fmt.Printf("%s %s %s\n", Yellow.Sprint("shell"), "~", shell)
-	}
-	if resolution, err := informer.GetResolution(); err == nil {
-		fmt.Printf("%s %s %s\n", Red.Sprint("resolution"), "~", resolution)
-	}
-	if deskEnv, err := informer.GetDesktopEnvironment(); err == nil {
-		fmt.Printf("%s %s %s\n", Green.Sprint("desktop env"), "~", deskEnv)
-	}
-	if terminal, err := informer.GetTerminalInfo(); err == nil {
-		fmt.Printf("%s %s %s\n", Cyan.Sprint("terminal"), "~", terminal)
-	}
-	if cpu, err := informer.GetCPU(); err == nil {
-		fmt.Printf("%s %s %s\n", Blue.Sprint("cpu"), "~", cpu)
-	}
-	if gpu, err := informer.GetGPU(); err == nil {
-		fmt.Printf("%s %s %s\n", Yellow.Sprint("gpu"), "~", gpu)
-	}
-	if memoryUsage, err := informer.GetMemoryUsage(); err == nil {
-		fmt.Printf("%s %s %s\n\n", Red.Sprint("memory"), "~", memoryUsage)
-	}
+	go func() {
+		if uptime, err := informer.GetUptime(); err == nil {
+			fmt.Printf("%s %s %s\n", Cyan.Sprint("uptime"), "~", uptime)
+		}
+		waitGroup.Done()
+	}()
+	go func() {
+		if numPackages, err := informer.GetNumberPackages(); err == nil {
+			fmt.Printf("%s %s %s\n", Blue.Sprint("packages"), "~", numPackages)
+		}
+		waitGroup.Done()
+	}()
+	go func() {
+		if shell, err := informer.GetShellInformation(); err == nil {
+			fmt.Printf("%s %s %s\n", Yellow.Sprint("shell"), "~", shell)
+		}
+		waitGroup.Done()
+	}()
+	go func() {
+		if resolution, err := informer.GetResolution(); err == nil {
+			fmt.Printf("%s %s %s\n", Red.Sprint("resolution"), "~", resolution)
+		}
+		waitGroup.Done()
+	}()
+	go func() {
+		if deskEnv, err := informer.GetDesktopEnvironment(); err == nil {
+			fmt.Printf("%s %s %s\n", Green.Sprint("desktop env"), "~", deskEnv)
+		}
+		waitGroup.Done()
+	}()
+	go func() {
+		if terminal, err := informer.GetTerminalInfo(); err == nil {
+			fmt.Printf("%s %s %s\n", Cyan.Sprint("terminal"), "~", terminal)
+		}
+		waitGroup.Done()
+	}()
+	go func() {
+		if cpu, err := informer.GetCPU(); err == nil {
+			fmt.Printf("%s %s %s\n", Blue.Sprint("cpu"), "~", cpu)
+		}
+		waitGroup.Done()
+	}()
+	go func() {
+		if gpu, err := informer.GetGPU(); err == nil {
+			fmt.Printf("%s %s %s\n", Yellow.Sprint("gpu"), "~", gpu)
+		}
+		waitGroup.Done()
+	}()
+	go func() {
+		if memoryUsage, err := informer.GetMemoryUsage(); err == nil {
+			fmt.Printf("%s %s %s\n\n", Red.Sprint("memory"), "~", memoryUsage)
+		}
+		waitGroup.Done()
+	}()
+	waitGroup.Wait()
 	// Dots
 	fmt.Printf("%s", Red.Sprint("○"))
 	fmt.Printf("     %s", Green.Sprint("○"))
