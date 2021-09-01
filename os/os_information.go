@@ -14,6 +14,7 @@ var (
 	cmd    *exec.Cmd
 	stdout bytes.Buffer
 	stderr bytes.Buffer
+	mutex  sync.Mutex
 )
 
 var (
@@ -55,11 +56,13 @@ type OSInformer interface {
 //ExecuteCommand executes the command with arguments as well reset the stderr and stdout
 func ExecuteCommand(command string, args ...string) (string, error) {
 	// Reset stdout and stderr if previous commands were run
+	mutex.Lock()
 	stdout.Reset()
 	stderr.Reset()
 	cmd = exec.Command(command, args...)
 	cmd.Stderr = &stderr
 	cmd.Stdout = &stdout
+	mutex.Unlock()
 
 	err := cmd.Run()
 
