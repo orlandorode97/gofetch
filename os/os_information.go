@@ -1,7 +1,6 @@
 package os
 
 import (
-	"bytes"
 	"fmt"
 	"os/exec"
 	"strings"
@@ -11,10 +10,7 @@ import (
 )
 
 var (
-	cmd    *exec.Cmd
-	stdout bytes.Buffer
-	stderr bytes.Buffer
-	mutex  sync.Mutex
+	cmd *exec.Cmd
 )
 
 var (
@@ -55,18 +51,18 @@ type OSInformer interface {
 
 //ExecuteCommand executes the command with arguments as well reset the stderr and stdout
 func ExecuteCommand(command string, args ...string) (string, error) {
+	var bufOut BufferOut
+	var bufErr BufferErr
 	// Reset stdout and stderr if previous commands were run
-	mutex.Lock()
-	stdout.Reset()
-	stderr.Reset()
+	bufOut.Reset()
+	bufErr.Reset()
 	cmd = exec.Command(command, args...)
-	cmd.Stderr = &stderr
-	cmd.Stdout = &stdout
-	mutex.Unlock()
+	cmd.Stderr = &bufErr.stderr
+	cmd.Stdout = &bufOut.stdout
 
 	err := cmd.Run()
 
-	return strings.TrimSuffix(stdout.String(), "\n"), err
+	return strings.TrimSuffix(bufOut.stdout.String(), "\n"), err
 }
 
 func PrintInfo(informer OSInformer) {
@@ -136,6 +132,7 @@ func PrintInfo(informer OSInformer) {
 		}
 		waitGroup.Done()
 	}()
+
 	waitGroup.Wait()
 	// Dots
 	fmt.Printf("\n%s", Red.Sprint("○"))
