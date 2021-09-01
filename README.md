@@ -16,6 +16,9 @@ go-fetch is CLI tool to fetch the operative system information and replicate too
 8. Create tests files
 9. Format  the uptime
 
+- Refactor uptime for mac
+
+
 ## Current Output
 <img width="591" alt="Screen Shot 2021-09-01 at 15 48 16" src="https://user-images.githubusercontent.com/34588445/131742993-089a029a-ad81-4bbf-b79a-709805e5ff2f.png">
 
