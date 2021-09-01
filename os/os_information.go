@@ -67,7 +67,12 @@ func ExecuteCommand(command string, args ...string) (string, error) {
 
 func PrintInfo(informer OSInformer) {
 
-	fmt.Printf("%s@%s\n", Red.Sprint(informer.GetName()), Red.Sprint(informer.GetHostname()))
+	if name, err := informer.GetName(); err == nil {
+		fmt.Printf("%s", Red.Sprint(name))
+	}
+	if host, err := informer.GetHostname(); err == nil {
+		fmt.Printf("@%s\n", Red.Sprint(host))
+	}
 
 	fmt.Printf("%s %s %s %s %s\n\n", Red.Sprint("X"), Green.Sprint("────"), Yellow.Sprint("X"), Green.Sprint("────"), Blue.Sprint("X"))
 
