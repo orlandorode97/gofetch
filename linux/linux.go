@@ -62,7 +62,7 @@ func (l *Linux) GetHostname() (string, error) {
 func (l *Linux) GetUptime() (string, error) {
 	uptime, err := osinfo.ExecuteCommand("uptime")
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	uptime = strings.Replace(uptime, "\r\n", "", -1)
 	uptimes := strings.Split(uptime, " ")
@@ -91,15 +91,20 @@ func (l *Linux) GetNumberPackages() (string, error) {
 
 // GetShellInformation return the used shell and its version
 func (l *Linux) GetShellInformation() (string, error) {
-	return osinfo.ExecuteCommand(os.ExpandEnv("$SHELL"), "--version")
+	command := fmt.Sprintf("echo %s | awk -F'/' '{print $NF}'", os.ExpandEnv("$SHELL"))
+	shell, err := osinfo.ExecuteCommand("bash", "-c", command)
+	if err != nil {
+		return "", err
+	}
+	return shell, nil
 }
 
 // GetResolution returns the resolution of thee current monitor
 func (l *Linux) GetResolution() (string, error) {
 	command := "xdpyinfo | grep 'dimensions:'"
 	resolution, err := osinfo.ExecuteCommand("bash", "-c", command)
-	if err == nil {
-		return "", nil
+	if err != nil {
+		return "", err
 	}
 	resolutions := strings.Split(resolution, "dimensions: ")
 	resolution = strings.TrimSpace(resolutions[1])
@@ -114,9 +119,9 @@ func (l *Linux) GetDesktopEnvironment() (string, error) {
 
 // GetTerminalInfo get the current terminal name
 func (l *Linux) GetTerminalInfo() (string, error) {
-	terminal, err := osinfo.ExecuteCommand("echo", os.ExpandEnv("$TERM_PROGRAM"))
+	terminal, err := osinfo.ExecuteCommand("echo", os.ExpandEnv("$TERM"))
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	return strings.TrimSpace(terminal), nil
 }
@@ -126,7 +131,7 @@ func (l *Linux) GetCPU() (string, error) {
 	command := "lscpu | grep 'Model name:'"
 	cpuInfo, err := osinfo.ExecuteCommand("bash", "-c", command)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	cpu := strings.Split(cpuInfo, ": ")
 	cpuInfo = strings.Replace(cpu[1], "\n\r", "", -1)
@@ -139,6 +144,7 @@ func (l *Linux) GetGPU() (string, error) {
 	command := "lspci -v | grep 'VGA\\|Display\\|3D'"
 	gpu, err := osinfo.ExecuteCommand("bash", "-c", command)
 	if err != nil {
+		return "", err
 	}
 	if regexGPU.MatchString(gpu) {
 		gpu = regexGPU.FindString(gpu)

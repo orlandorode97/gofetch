@@ -81,7 +81,7 @@ func (mac *MacOS) GetDesktopEnvironment() (string, error) {
 func (mac *MacOS) GetTerminalInfo() (string, error) {
 	terminal, err := osinfo.ExecuteCommand("echo", os.ExpandEnv("$TERM_PROGRAM"))
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	return strings.TrimSpace(terminal), nil
 }
@@ -91,7 +91,7 @@ func (mac *MacOS) GetCPU() (string, error) {
 	command := "sysctl -a | grep machdep.cpu.brand_string"
 	cpuInfo, err := osinfo.ExecuteCommand("bash", "-c", command)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	cpu := strings.Split(cpuInfo, ": ")
 	cpuInfo = strings.Replace(cpu[1], "\n\r", "", -1)
