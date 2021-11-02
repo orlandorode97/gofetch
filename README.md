@@ -20,7 +20,4 @@ go-fetch is CLI tool to fetch the operative system information and replicate too
 
 
 ## Current Output
-<img width="591" alt="Screen Shot 2021-09-01 at 15 48 16" src="https://user-images.githubusercontent.com/34588445/131742993-089a029a-ad81-4bbf-b79a-709805e5ff2f.png">
-
-
-
+<img width="591" alt="Screen Shot 2021-09-01 at 15 48 16" src="https://user-images.githubusercontent.com/34588445/139793025-19894dd8-47c4-4fa5-b06c-e77eebc6b9ae.png">
