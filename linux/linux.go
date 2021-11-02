@@ -20,13 +20,13 @@ var (
 )
 
 // command to found the binary file of the current package manager
-const NetPackage = `which {xbps-install,apk,apt,pacman,nix,yum,rpm,emerge} 2>/dev/null | grep -v "not found"`
+const NetPackage = `which {xbps-install,apk,dpkg,pacman,nix,yum,rpm,emerge} 2>/dev/null | grep -v "not found"`
 
 func init() {
 	distrosPackages = map[PackageManager]Command{
 		"xbps-install": "xbps-query -l | wc -l",
 		"apk":          "apk search | wc -l",
-		"apt":          "apt list --installed 2>/dev/null | wc -l",
+		"dpkg":         "dpkg-query -f '.\n' -W | wc -l",
 		"pacman":       "pacman -Q | wc -l",
 		"nix":          `nix-env -qa --installed "*" | wc -l`,
 		"yum":          "yum list installed | wc -l",
