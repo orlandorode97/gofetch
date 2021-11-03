@@ -34,19 +34,67 @@ func init() {
 
 }
 
-type OSInformer interface {
+type Versioner interface {
 	GetOSVersion() (string, error)
+}
+
+type Namer interface {
 	GetName() (string, error)
+}
+
+type Hoster interface {
 	GetHostname() (string, error)
+}
+
+type Timer interface {
 	GetUptime() (string, error)
+}
+
+type Packager interface {
 	GetNumberPackages() (string, error)
+}
+
+type Sheller interface {
 	GetShellInformation() (string, error)
+}
+
+type Resolusioner interface {
 	GetResolution() (string, error)
+}
+
+type Environment interface {
 	GetDesktopEnvironment() (string, error)
+}
+
+type Terminal interface {
 	GetTerminalInfo() (string, error)
+}
+
+type CPU interface {
 	GetCPU() (string, error)
+}
+
+type GPU interface {
 	GetGPU() (string, error)
+}
+
+type Usager interface {
 	GetMemoryUsage() (string, error)
+}
+
+type OSInformer interface {
+	Versioner
+	Namer
+	Hoster
+	Timer
+	Packager
+	Sheller
+	Resolusioner
+	Environment
+	Terminal
+	CPU
+	GPU
+	Usager
 }
 
 //ExecuteCommand executes the command with arguments as well reset the stderr and stdout
