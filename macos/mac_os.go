@@ -5,24 +5,24 @@ import (
 	"os"
 	"strings"
 
-	osinfo "github.com/OrlandoRomo/gofetch/os"
+	"github.com/OrlandoRomo/gofetch/command"
 	"github.com/shirou/gopsutil/mem"
 )
 
 type MacOS struct{}
 
-func NewMacOS() *MacOS {
+func New() *MacOS {
 	return &MacOS{}
 }
 
 // GetName returns the current user name
 func (mac *MacOS) GetName() (string, error) {
-	return osinfo.ExecuteCommand("whoami")
+	return command.ExecuteCommand("whoami")
 }
 
 // GetOSVersion returns the name of the current OS, version and kernel version
 func (mac *MacOS) GetOSVersion() (string, error) {
-	return osinfo.ExecuteCommand("uname", "-srm")
+	return command.ExecuteCommand("uname", "-srm")
 }
 
 // GetHostname returns the hostname of the machine
@@ -32,7 +32,7 @@ func (mac *MacOS) GetHostname() (string, error) {
 
 // GetUptime returns the up time of the current OS
 func (mac *MacOS) GetUptime() (string, error) {
-	uptime, err := osinfo.ExecuteCommand("uptime")
+	uptime, err := command.ExecuteCommand("uptime")
 	if err != nil {
 		return "", err
 	}
@@ -43,8 +43,8 @@ func (mac *MacOS) GetUptime() (string, error) {
 
 // GetNumberPackages return the number of packages install by homebrew
 func (mac *MacOS) GetNumberPackages() (string, error) {
-	command := "ls /usr/local/Cellar/ | wc -l"
-	packages, err := osinfo.ExecuteCommand("bash", "-c", command)
+	cmd := "ls /usr/local/Cellar/ | wc -l"
+	packages, err := command.ExecuteCommand("bash", "-c", cmd)
 	if err != nil {
 		return "", err
 	}
@@ -53,7 +53,7 @@ func (mac *MacOS) GetNumberPackages() (string, error) {
 
 // GetShellInformation return the used shell and its version
 func (mac *MacOS) GetShellInformation() (string, error) {
-	shell, err := osinfo.ExecuteCommand(os.ExpandEnv("$SHELL"), "--version")
+	shell, err := command.ExecuteCommand(os.ExpandEnv("$SHELL"), "--version")
 	if err != nil {
 		return "", err
 	}
@@ -62,8 +62,8 @@ func (mac *MacOS) GetShellInformation() (string, error) {
 
 // GetResolution returns the resolution of thee current monitor
 func (mac *MacOS) GetResolution() (string, error) {
-	command := "system_profiler SPDisplaysDataType  | grep Resolution"
-	resolution, err := osinfo.ExecuteCommand("bash", "-c", command)
+	cmd := "system_profiler SPDisplaysDataType  | grep Resolution"
+	resolution, err := command.ExecuteCommand("bash", "-c", cmd)
 	if err != nil {
 		return "", err
 	}
@@ -79,7 +79,7 @@ func (mac *MacOS) GetDesktopEnvironment() (string, error) {
 
 // GetTerminalInfo get the current terminal name
 func (mac *MacOS) GetTerminalInfo() (string, error) {
-	terminal, err := osinfo.ExecuteCommand("echo", os.ExpandEnv("$TERM_PROGRAM"))
+	terminal, err := command.ExecuteCommand("echo", os.ExpandEnv("$TERM_PROGRAM"))
 	if err != nil {
 		return "", err
 	}
@@ -88,8 +88,8 @@ func (mac *MacOS) GetTerminalInfo() (string, error) {
 
 // GetCPU returns the name of th CPU
 func (mac *MacOS) GetCPU() (string, error) {
-	command := "sysctl -a | grep machdep.cpu.brand_string"
-	cpuInfo, err := osinfo.ExecuteCommand("bash", "-c", command)
+	cmd := "sysctl -a | grep machdep.cpu.brand_string"
+	cpuInfo, err := command.ExecuteCommand("bash", "-c", cmd)
 	if err != nil {
 		return "", err
 	}
@@ -101,8 +101,8 @@ func (mac *MacOS) GetCPU() (string, error) {
 
 // GetGPU returns the name of the GPU
 func (mac *MacOS) GetGPU() (string, error) {
-	command := "system_profiler SPDisplaysDataType | grep 'Chipset Model'"
-	gpu, err := osinfo.ExecuteCommand("bash", "-c", command)
+	cmd := "system_profiler SPDisplaysDataType | grep 'Chipset Model'"
+	gpu, err := command.ExecuteCommand("bash", "-c", cmd)
 	if err != nil {
 		return "", err
 	}
