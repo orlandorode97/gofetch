@@ -1,4 +1,4 @@
-package linux
+package gofetch
 
 import (
 	"fmt"
@@ -37,29 +37,29 @@ func init() {
 	regexPackages = regexp.MustCompile(`[^/]*$`)
 }
 
-type Linux struct{}
+type linux struct{}
 
-func New() *Linux {
-	return &Linux{}
+func NewLinux() command.OSInformer {
+	return &linux{}
 }
 
 // GetName returns the current user name
-func (l *Linux) GetName() (string, error) {
+func (l *linux) GetName() (string, error) {
 	return command.ExecuteCommand("whoami")
 }
 
 // GetOSVersion returns the name of the current OS, version and kernel version
-func (l *Linux) GetOSVersion() (string, error) {
+func (l *linux) GetOSVersion() (string, error) {
 	return command.ExecuteCommand("uname", "-srm")
 }
 
 // GetHostname returns the hostname of the linux distro
-func (l *Linux) GetHostname() (string, error) {
+func (l *linux) GetHostname() (string, error) {
 	return os.Hostname()
 }
 
 // GetUptime returns the up time of the current OS
-func (l *Linux) GetUptime() (string, error) {
+func (l *linux) GetUptime() (string, error) {
 	uptime, err := command.ExecuteCommand("uptime")
 	if err != nil {
 		return "", err
@@ -70,7 +70,7 @@ func (l *Linux) GetUptime() (string, error) {
 }
 
 // GetNumberPackages return the number of packages install by homebrew
-func (l *Linux) GetNumberPackages() (string, error) {
+func (l *linux) GetNumberPackages() (string, error) {
 	packageManager, err := command.ExecuteCommand(`bash`, `-c`, NetPackage)
 	if err != nil {
 		return "", err
@@ -90,7 +90,7 @@ func (l *Linux) GetNumberPackages() (string, error) {
 }
 
 // GetShellInformation return the used shell and its version
-func (l *Linux) GetShellInformation() (string, error) {
+func (l *linux) GetShellInformation() (string, error) {
 	cmd := fmt.Sprintf("echo %s | awk -F'/' '{print $NF}'", os.ExpandEnv("$SHELL"))
 	shell, err := command.ExecuteCommand("bash", "-c", cmd)
 	if err != nil {
@@ -100,7 +100,7 @@ func (l *Linux) GetShellInformation() (string, error) {
 }
 
 // GetResolution returns the resolution of thee current monitor
-func (l *Linux) GetResolution() (string, error) {
+func (l *linux) GetResolution() (string, error) {
 	cmd := "xdpyinfo | grep 'dimensions:'"
 	resolution, err := command.ExecuteCommand("bash", "-c", cmd)
 	if err != nil {
@@ -113,12 +113,12 @@ func (l *Linux) GetResolution() (string, error) {
 }
 
 // GetDesktopEnvironment returns the resolution of the current monitor
-func (l *Linux) GetDesktopEnvironment() (string, error) {
+func (l *linux) GetDesktopEnvironment() (string, error) {
 	return "Aqua", nil
 }
 
 // GetTerminalInfo get the current terminal name
-func (l *Linux) GetTerminalInfo() (string, error) {
+func (l *linux) GetTerminalInfo() (string, error) {
 	terminal, err := command.ExecuteCommand("echo", os.ExpandEnv("$TERM"))
 	if err != nil {
 		return "", err
@@ -127,7 +127,7 @@ func (l *Linux) GetTerminalInfo() (string, error) {
 }
 
 // GetCPU returns the name of th CPU
-func (l *Linux) GetCPU() (string, error) {
+func (l *linux) GetCPU() (string, error) {
 	cmd := "lscpu | grep 'Model name:'"
 	cpuInfo, err := command.ExecuteCommand("bash", "-c", cmd)
 	if err != nil {
@@ -140,7 +140,7 @@ func (l *Linux) GetCPU() (string, error) {
 }
 
 // GetGPU returns the name of the GPU
-func (l *Linux) GetGPU() (string, error) {
+func (l *linux) GetGPU() (string, error) {
 	cmd := "lspci -v | grep 'VGA\\|Display\\|3D'"
 	gpu, err := command.ExecuteCommand("bash", "-c", cmd)
 	if err != nil {
@@ -153,7 +153,7 @@ func (l *Linux) GetGPU() (string, error) {
 }
 
 // GetMemoryUsage returns the memory usage of the computer
-func (l *Linux) GetMemoryUsage() (string, error) {
+func (l *linux) GetMemoryUsage() (string, error) {
 	memStat, err := mem.VirtualMemory()
 	if err != nil {
 		return "", err

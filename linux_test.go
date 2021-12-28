@@ -1,4 +1,4 @@
-package linux
+package gofetch
 
 import (
 	"testing"
@@ -8,7 +8,7 @@ import (
 
 func Test_GetName(t *testing.T) {
 	t.Run("get name", func(t *testing.T) {
-		linux := new(Linux)
+		linux := NewLinux()
 		name, err := linux.GetName()
 		assert.Nil(t, err, "should not return an error")
 		assert.NotNil(t, name, "name is not nil")
