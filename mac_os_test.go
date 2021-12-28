@@ -1,4 +1,4 @@
-package macos
+package gofetch
 
 import (
 	"errors"
@@ -22,7 +22,7 @@ func (m *MockMacOS) GetOSVersion() (string, error) {
 	return args.Get(0).(string), args.Error(1)
 }
 
-func Test_GetName(t *testing.T) {
+func TestGetName(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		mockMac := new(MockMacOS)
 		mockMac.On("GetName", mock.Anything).Return("Mac OS User", nil)
@@ -41,7 +41,7 @@ func Test_GetName(t *testing.T) {
 	})
 }
 
-func Test_GetOSVersion(t *testing.T) {
+func TestGetOSVersion(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		mockMac := new(MockMacOS)
 		mockMac.On("GetOSVersion", mock.Anything).Return("Darwin 20.5.0 x86_64", nil)
