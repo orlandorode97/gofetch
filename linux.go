@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/OrlandoRomo/gofetch/command"
@@ -13,8 +14,11 @@ import (
 type PackageManager string
 type Command string
 
+type DesktopName string
+
 var (
 	distrosPackages map[PackageManager]Command
+	desktopVersion  map[DesktopName]Command
 	regexGPU        *regexp.Regexp
 	regexPackages   *regexp.Regexp
 )
@@ -35,22 +39,38 @@ func init() {
 	}
 	regexGPU = regexp.MustCompile(`(Intel|Advanced|NVIDIA|MCST|Virtual Box)([^\(|\(|\\]+)`)
 	regexPackages = regexp.MustCompile(`[^/]*$`)
+
+	desktopVersion = map[DesktopName]Command{
+		"Plasma":   "plasmashell --version",
+		"KDE":      "plasmashell --version",
+		"MATE":     "mate-session --version",
+		"Xfce":     "xfce4-session --version",
+		"GNOME":    "gnome-shell --version",
+		"Cinnamon": "cinnamon --version",
+		"Deepin":   "awk -F'=' '/MajorVersion/ {print $2}' /etc/os-version",
+		"Budgie":   "budgie-desktop --version",
+		"LXQt":     "lxqt-session --version",
+		"Lumina":   "lumina-desktop --version 2>&1",
+		"Trinity":  "tde-config --version",
+		"Unity":    "unity --version",
+	}
+
 }
 
 type linux struct{}
 
-func NewLinux() command.OSInformer {
+func NewLinux() command.Informer {
 	return &linux{}
 }
 
 // GetName returns the current user name
 func (l *linux) GetName() (string, error) {
-	return command.ExecuteCommand("whoami")
+	return command.Execute("whoami")
 }
 
 // GetOSVersion returns the name of the current OS, version and kernel version
 func (l *linux) GetOSVersion() (string, error) {
-	return command.ExecuteCommand("uname", "-srm")
+	return command.Execute("uname", "-srm")
 }
 
 // GetHostname returns the hostname of the linux distro
@@ -60,18 +80,29 @@ func (l *linux) GetHostname() (string, error) {
 
 // GetUptime returns the up time of the current OS
 func (l *linux) GetUptime() (string, error) {
-	uptime, err := command.ExecuteCommand("uptime")
+	boot := `$(date -d "$(uptime -s)" +%s)`
+	now := `$(date +%s)`
+	seconds := fmt.Sprintf("echo $((%s - %s))", now, boot)
+	seconds, err := command.Execute("bash", "-c", seconds)
 	if err != nil {
 		return "", err
 	}
-	uptime = strings.Replace(uptime, "\r\n", "", -1)
-	uptimes := strings.Split(uptime, " ")
-	return uptimes[4], nil
+
+	s, err := strconv.ParseInt(seconds, 10, 32)
+	if err != nil {
+		return "", err
+	}
+
+	minutes := s / 60 % 60
+	hours := s / 60 / 60 % 24
+	days := s / 60 / 60 / 24
+
+	return fmt.Sprintf("%d day(s), %d hour(s), %d minutes(s)", days, hours, minutes), nil
 }
 
-// GetNumberPackages return the number of packages install by homebrew
+// GetNumberPackages return the number of packages installed by the current package manager
 func (l *linux) GetNumberPackages() (string, error) {
-	packageManager, err := command.ExecuteCommand(`bash`, `-c`, NetPackage)
+	packageManager, err := command.Execute(`bash`, `-c`, NetPackage)
 	if err != nil {
 		return "", err
 	}
@@ -86,13 +117,13 @@ func (l *linux) GetNumberPackages() (string, error) {
 		return "Unknown", nil
 	}
 
-	return command.ExecuteCommand("bash", "-c", string(name))
+	return command.Execute("bash", "-c", string(name))
 }
 
 // GetShellInformation return the used shell and its version
 func (l *linux) GetShellInformation() (string, error) {
 	cmd := fmt.Sprintf("echo %s | awk -F'/' '{print $NF}'", os.ExpandEnv("$SHELL"))
-	shell, err := command.ExecuteCommand("bash", "-c", cmd)
+	shell, err := command.Execute("bash", "-c", cmd)
 	if err != nil {
 		return "", err
 	}
@@ -102,7 +133,7 @@ func (l *linux) GetShellInformation() (string, error) {
 // GetResolution returns the resolution of thee current monitor
 func (l *linux) GetResolution() (string, error) {
 	cmd := "xdpyinfo | grep 'dimensions:'"
-	resolution, err := command.ExecuteCommand("bash", "-c", cmd)
+	resolution, err := command.Execute("bash", "-c", cmd)
 	if err != nil {
 		return "", err
 	}
@@ -114,12 +145,30 @@ func (l *linux) GetResolution() (string, error) {
 
 // GetDesktopEnvironment returns the resolution of the current monitor
 func (l *linux) GetDesktopEnvironment() (string, error) {
-	return "Aqua", nil
+	// xdg stands for Cross-Desktop Group
+	xdg, err := command.Execute("echo", os.ExpandEnv("$XDG_CURRENT_DESKTOP"))
+	if err != nil {
+		return "", err
+	}
+
+	// Some $XDG_CURRENT_DESKTOP variables returns values like ubuntu:GNOME
+	deskName := strings.Split(xdg, ":")
+	deVerCommand := desktopVersion[DesktopName(deskName[0])]
+	if len(deskName) != 1 {
+		deVerCommand = desktopVersion[DesktopName(deskName[1])]
+	}
+
+	version, err := command.Execute("bash", "-c", string(deVerCommand))
+	if err != nil {
+		return "", err
+	}
+
+	return version, nil
 }
 
 // GetTerminalInfo get the current terminal name
 func (l *linux) GetTerminalInfo() (string, error) {
-	terminal, err := command.ExecuteCommand("echo", os.ExpandEnv("$TERM"))
+	terminal, err := command.Execute("echo", os.ExpandEnv("$TERM"))
 	if err != nil {
 		return "", err
 	}
@@ -129,7 +178,7 @@ func (l *linux) GetTerminalInfo() (string, error) {
 // GetCPU returns the name of th CPU
 func (l *linux) GetCPU() (string, error) {
 	cmd := "lscpu | grep 'Model name:'"
-	cpuInfo, err := command.ExecuteCommand("bash", "-c", cmd)
+	cpuInfo, err := command.Execute("bash", "-c", cmd)
 	if err != nil {
 		return "", err
 	}
@@ -142,7 +191,7 @@ func (l *linux) GetCPU() (string, error) {
 // GetGPU returns the name of the GPU
 func (l *linux) GetGPU() (string, error) {
 	cmd := "lspci -v | grep 'VGA\\|Display\\|3D'"
-	gpu, err := command.ExecuteCommand("bash", "-c", cmd)
+	gpu, err := command.Execute("bash", "-c", cmd)
 	if err != nil {
 		return "", err
 	}

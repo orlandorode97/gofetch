@@ -82,7 +82,7 @@ type Usager interface {
 	GetMemoryUsage() (string, error)
 }
 
-type OSInformer interface {
+type Informer interface {
 	Versioner
 	Namer
 	Hoster
@@ -98,7 +98,7 @@ type OSInformer interface {
 }
 
 //ExecuteCommand executes the command with arguments as well reset the stderr and stdout
-func ExecuteCommand(command string, args ...string) (string, error) {
+func Execute(command string, args ...string) (string, error) {
 	var bufOut BufferOut
 	var bufErr BufferErr
 	// Reset stdout and stderr if previous commands were run
@@ -113,7 +113,7 @@ func ExecuteCommand(command string, args ...string) (string, error) {
 	return strings.TrimSuffix(bufOut.stdout.String(), "\n"), err
 }
 
-func Fetch(in OSInformer) {
+func Fetch(in Informer) {
 
 	waitGroup := sync.WaitGroup{}
 
