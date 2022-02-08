@@ -32,19 +32,19 @@ func init() {
 	Magenta = color.New(color.FgHiMagenta, color.Bold)
 	White = color.New(color.FgWhite, color.Bold)
 
-	Colors = []*color.Color{Red, Green, Cyan, Yellow, Blue, Magenta, White}
+	Colors = []*color.Color{Red, Green, Cyan, Yellow, Blue, Magenta}
 	Info = map[string]string{
-		"GetOSVersion":          "os",
+		"GetOSVersion":          "OS",
 		"GetName":               "name",
 		"GetHostname":           "host",
 		"GetUptime":             "uptime",
 		"GetNumberPackages":     "packages",
 		"GetShellInformation":   "shell",
 		"GetResolution":         "resolution",
-		"GetDesktopEnvironment": "de",
+		"GetDesktopEnvironment": "DE",
 		"GetTerminalInfo":       "terminal",
-		"GetGPU":                "gpu",
-		"GetCPU":                "cpu",
+		"GetGPU":                "GPU",
+		"GetCPU":                "CPU",
 		"GetMemoryUsage":        "memory",
 	}
 }
