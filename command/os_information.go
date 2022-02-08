@@ -12,15 +12,15 @@ import (
 )
 
 var (
-	Red     *color.Color
-	Green   *color.Color
-	Cyan    *color.Color
-	Yellow  *color.Color
-	Blue    *color.Color
-	Magenta *color.Color
-	White   *color.Color
-	Colors  []*color.Color
-	Info    map[string]string
+	Red         *color.Color
+	Green       *color.Color
+	Cyan        *color.Color
+	Yellow      *color.Color
+	Blue        *color.Color
+	Magenta     *color.Color
+	White       *color.Color
+	Colors      []*color.Color
+	ShortenInfo map[string]string
 )
 
 func init() {
@@ -33,7 +33,7 @@ func init() {
 	White = color.New(color.FgWhite, color.Bold)
 
 	Colors = []*color.Color{Red, Green, Cyan, Yellow, Blue, Magenta}
-	Info = map[string]string{
+	ShortenInfo = map[string]string{
 		"GetOSVersion":          "OS",
 		"GetName":               "name",
 		"GetHostname":           "host",
@@ -164,5 +164,5 @@ func Fetch(in Informer) {
 func RandColor(s string) string {
 	l := len(Colors)
 	index := rand.Intn(l-0) + 0
-	return Colors[index].Sprint(Info[s])
+	return Colors[index].Sprint(ShortenInfo[s])
 }
