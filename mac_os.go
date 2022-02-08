@@ -3,11 +3,20 @@ package gofetch
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/OrlandoRomo/gofetch/command"
 	"github.com/shirou/gopsutil/mem"
 )
+
+var (
+	regexUptime *regexp.Regexp
+)
+
+func init() {
+	regexUptime = regexp.MustCompile(`\=\s(.*.+?),`)
+}
 
 type macos struct{}
 
@@ -32,13 +41,22 @@ func (mac *macos) GetHostname() (string, error) {
 
 // GetUptime returns the up time of the current OS
 func (mac *macos) GetUptime() (string, error) {
-	uptime, err := command.Execute("uptime")
+	boot, err := command.Execute("sysctl", "-n", "kern.boottime")
 	if err != nil {
 		return "", err
 	}
-	uptime = strings.Replace(uptime, "\r\n", "", -1)
-	uptimes := strings.Split(uptime, " ")
-	return uptimes[4], nil
+	matches := regexUptime.FindStringSubmatch(boot)
+	if len(matches) != 0 && matches[1] == "" {
+		return "", nil
+	}
+	now := `$(date +%s)`
+	seconds := fmt.Sprintf("echo $((%s - %s))", now, matches[1])
+	seconds, err = command.Execute("bash", "-c", seconds)
+	if err != nil {
+		return "", err
+	}
+
+	return ParseUptime(seconds)
 }
 
 // GetNumberPackages return the number of packages install by homebrew
