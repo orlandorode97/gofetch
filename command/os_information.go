@@ -2,15 +2,13 @@ package command
 
 import (
 	"fmt"
+	"math/rand"
 	"os/exec"
+	"reflect"
 	"strings"
 	"sync"
 
 	"github.com/fatih/color"
-)
-
-var (
-	cmd *exec.Cmd
 )
 
 var (
@@ -21,6 +19,8 @@ var (
 	Blue    *color.Color
 	Magenta *color.Color
 	White   *color.Color
+	Colors  []*color.Color
+	Info    map[string]string
 )
 
 func init() {
@@ -32,6 +32,21 @@ func init() {
 	Magenta = color.New(color.FgHiMagenta, color.Bold)
 	White = color.New(color.FgWhite, color.Bold)
 
+	Colors = []*color.Color{Red, Green, Cyan, Yellow, Blue, Magenta, White}
+	Info = map[string]string{
+		"GetOSVersion":          "os",
+		"GetName":               "name",
+		"GetHostname":           "host",
+		"GetUptime":             "uptime",
+		"GetNumberPackages":     "packages",
+		"GetShellInformation":   "shell",
+		"GetResolution":         "resolution",
+		"GetDesktopEnvironment": "de",
+		"GetTerminalInfo":       "terminal",
+		"GetGPU":                "gpu",
+		"GetCPU":                "cpu",
+		"GetMemoryUsage":        "memory",
+	}
 }
 
 type Versioner interface {
@@ -102,9 +117,11 @@ func Execute(command string, args ...string) (string, error) {
 	var bufOut BufferOut
 	var bufErr BufferErr
 	// Reset stdout and stderr if previous commands were run
-	bufOut.Reset()
 	bufErr.Reset()
-	cmd = exec.Command(command, args...)
+	bufOut.Reset()
+
+	cmd := exec.Command(command, args...)
+
 	cmd.Stderr = &bufErr.stderr
 	cmd.Stdout = &bufOut.stdout
 
@@ -114,73 +131,25 @@ func Execute(command string, args ...string) (string, error) {
 }
 
 func Fetch(in Informer) {
-
-	waitGroup := sync.WaitGroup{}
-
-	waitGroup.Add(9)
-	if name, err := in.GetName(); err == nil {
-		fmt.Printf("%s", Red.Sprint(name))
-	}
-	if host, err := in.GetHostname(); err == nil {
-		fmt.Printf("@%s\n", Red.Sprint(host))
-	}
 	fmt.Printf("%s %s %s %s %s\n\n", Red.Sprint("X"), Green.Sprint("────"), Yellow.Sprint("X"), Green.Sprint("────"), Blue.Sprint("X"))
 
-	go func() {
-		if uptime, err := in.GetUptime(); err == nil {
-			fmt.Printf("%s %s %s\n", Cyan.Sprint("uptime"), "~", uptime)
-		}
-		waitGroup.Done()
-	}()
-	go func() {
-		if numPackages, err := in.GetNumberPackages(); err == nil {
-			fmt.Printf("%s %s %s\n", Blue.Sprint("packages"), "~", numPackages)
-		}
-		waitGroup.Done()
-	}()
-	go func() {
-		if shell, err := in.GetShellInformation(); err == nil {
-			fmt.Printf("%s %s %s\n", Yellow.Sprint("shell"), "~", shell)
-		}
-		waitGroup.Done()
-	}()
-	go func() {
-		if resolution, err := in.GetResolution(); err == nil {
-			fmt.Printf("%s %s %s\n", Red.Sprint("resolution"), "~", resolution)
-		}
-		waitGroup.Done()
-	}()
-	go func() {
-		if deskEnv, err := in.GetDesktopEnvironment(); err == nil {
-			fmt.Printf("%s %s %s\n", Green.Sprint("desktop env"), "~", deskEnv)
-		}
-		waitGroup.Done()
-	}()
-	go func() {
-		if terminal, err := in.GetTerminalInfo(); err == nil {
-			fmt.Printf("%s %s %s\n", Cyan.Sprint("terminal"), "~", terminal)
-		}
-		waitGroup.Done()
-	}()
-	go func() {
-		if cpu, err := in.GetCPU(); err == nil {
-			fmt.Printf("%s %s %s\n", Blue.Sprint("cpu"), "~", cpu)
-		}
-		waitGroup.Done()
-	}()
-	go func() {
-		if gpu, err := in.GetGPU(); err == nil {
-			fmt.Printf("%s %s %s\n", Yellow.Sprint("gpu"), "~", gpu)
-		}
-		waitGroup.Done()
-	}()
-	go func() {
-		if memoryUsage, err := in.GetMemoryUsage(); err == nil {
-			fmt.Printf("%s %s %s\n", Red.Sprint("memory"), "~", memoryUsage)
-		}
-		waitGroup.Done()
-	}()
-
+	waitGroup := sync.WaitGroup{}
+	inType := reflect.TypeOf(in)
+	inValue := reflect.ValueOf(in)
+	for i := 0; i < inType.NumMethod(); i++ {
+		function := inType.Method(i)
+		waitGroup.Add(1)
+		go func(f reflect.Method, w *sync.WaitGroup) {
+			defer waitGroup.Done()
+			result := function.Func.Call([]reflect.Value{inValue})
+			output, _ := result[0].Interface().(string)
+			err, ok := result[1].Interface().(error)
+			if ok && err != nil {
+				return
+			}
+			fmt.Printf("%s %s %s\n", RandColor(function.Name), "~", output)
+		}(function, &waitGroup)
+	}
 	waitGroup.Wait()
 	// Dots
 	fmt.Printf("\n%s", Red.Sprint("○"))
@@ -190,4 +159,10 @@ func Fetch(in Informer) {
 	fmt.Printf("     %s", Cyan.Sprint("○"))
 	fmt.Printf("     %s", Magenta.Sprint("○"))
 	fmt.Printf("     %s\n", White.Sprint("○"))
+}
+
+func RandColor(s string) string {
+	l := len(Colors)
+	index := rand.Intn(l-0) + 0
+	return Colors[index].Sprint(Info[s])
 }
