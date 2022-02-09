@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/OrlandoRomo/gofetch/command"
@@ -88,16 +87,7 @@ func (l *linux) GetUptime() (string, error) {
 		return "", err
 	}
 
-	s, err := strconv.ParseInt(seconds, 10, 32)
-	if err != nil {
-		return "", err
-	}
-
-	minutes := s / 60 % 60
-	hours := s / 60 / 60 % 24
-	days := s / 60 / 60 / 24
-
-	return fmt.Sprintf("%d day(s), %d hour(s), %d minutes(s)", days, hours, minutes), nil
+	return ParseUptime(seconds)
 }
 
 // GetNumberPackages return the number of packages installed by the current package manager
