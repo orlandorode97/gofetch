@@ -41,28 +41,28 @@ build-linux-arm64:
 ## build-mac-amd64: Build gofetch for mac amd64
 build-mac-amd64:
 	@echo "--> Building gofetch binary for $(GOOS_MAC):$(GOARCH_AMD64)"
-	@env GOOS=$(GOOS_MAC) GOACH=$(GOOS_MAC) go build -o gofetch ./cmd/mac
+	@env GOOS=$(GOOS_MAC) GOACH=$(GOOS_MAC) go build -o gofetch ./cmd/macos
 	@echo "--> gofetch for $(GOOS_MAC):$(GOARCH_AMD64) built at $(PWD_PROJECT)"
 .PHONY: build-mac-amd64
 
 ## build-mac-arm: Build gofetch for mac arm
 build-mac-arm:
 	@echo "--> Building gofetch binary for $(GOOS_MAC):$(GOARCH_ARM)"
-	@env GOOS=$(GOOS_MAC) GOACH=$(GOOS_MAC) go build -o gofetch ./cmd/mac
+	@env GOOS=$(GOOS_MAC) GOACH=$(GOOS_MAC) go build -o gofetch ./cmd/macos
 	@echo "--> gofetch for $(GOOS_MAC):$(GOARCH_ARM) built at $(PWD_PROJECT)"
 .PHONY: build-mac-arm
 
 ## build-mac-arm64: Build gofetch for mac arm64
 build-mac-arm64:
 	@echo "--> Building gofetch binary for $(GOOS_MAC):$(GOARCH_ARM64)"
-	@env GOOS=$(GOOS_MAC) GOACH=$(GOOS_MAC) go build -o gofetch ./cmd/mac
+	@env GOOS=$(GOOS_MAC) GOACH=$(GOOS_MAC) go build -o gofetch ./cmd/macos
 	@echo "--> gofetch for $(GOOS_MAC):$(GOARCH_ARM64) built at $(PWD_PROJECT)"
 .PHONY: build-mac-arm64
 
 ## build-windows-amd64: Build gofetch for windows amd64
 build-windows-amd64:
 	@echo "--> Building gofetch binary for $(windows):$(GOARCH_AMD64)"
-	@env GOOS=$(windows) GOACH=$(windows) go build -o gofetch ./cmd/mac
+	@env GOOS=$(windows) GOACH=$(windows) go build -o gofetch ./cmd/windows
 	@echo "--> gofetch for $(windows):$(GOARCH_AMD64) built at $(PWD_PROJECT)"
 .PHONY: build-windows-amd64
 
