@@ -20,7 +20,7 @@ $ git clone https://github.com/orlandorode97/gofetch.git
     ```sh
     $ make build-linux-amd64
     --> Building gofetch binary for linux:amd64
-    --> gofetch for darwin:linux built at /usr/home/orlandoromo/go/src/gofetch
+    --> gofetch for linux:amd64 built at /usr/home/orlandoromo/go/src/gofetch
     ```
 5. The previous command generates the binary `gofetch` at the root of the project. Copy it to the folder under `/usr/local/bin` either on `linux` or `mac`:
 ```sh
