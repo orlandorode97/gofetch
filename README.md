@@ -32,17 +32,5 @@ $ sudo cp gofetch /usr/local/bin
 
 
 ## TODO
-**Retrieve the following information** for Windows
-1. Resolution
-2. DesktopEnvironment
-3. Terminal
-4. CPU
-5. GPU
-6. Memory
-7. Print the logo of the current OS
-8. Create tests files
-9. Format  the uptime
-
-
 **Print the logo of each os when `gofetch` is called**.
 
