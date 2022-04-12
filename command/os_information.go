@@ -131,11 +131,11 @@ func Execute(command string, args ...string) (string, error) {
 }
 
 func Fetch(in Informer) {
-	fmt.Printf("%s %s %s %s %s\n\n", Red.Sprint("X"), Green.Sprint("────"), Yellow.Sprint("X"), Green.Sprint("────"), Blue.Sprint("X"))
 
 	waitGroup := sync.WaitGroup{}
-	inType := reflect.TypeOf(in)
-	inValue := reflect.ValueOf(in)
+	var m sync.Mutex
+	inType, inValue := reflect.TypeOf(in), reflect.ValueOf(in)
+	str := make([]string, 0)
 	for i := 0; i < inType.NumMethod(); i++ {
 		function := inType.Method(i)
 		waitGroup.Add(1)
@@ -147,22 +147,48 @@ func Fetch(in Informer) {
 			if ok && err != nil {
 				return
 			}
-			fmt.Printf("%s %s %s\n", RandColor(function.Name), "~", output)
+			m.Lock()
+			defer m.Unlock()
+			str = append(str, fmt.Sprintf("%s %s %s", randColor(function.Name), "~", output))
 		}(function, &waitGroup)
 	}
+
 	waitGroup.Wait()
-	// Dots
-	fmt.Printf("\n%s", Red.Sprint("○"))
-	fmt.Printf("     %s", Green.Sprint("○"))
-	fmt.Printf("     %s", Blue.Sprint("○"))
-	fmt.Printf("     %s", Yellow.Sprint("○"))
-	fmt.Printf("     %s", Cyan.Sprint("○"))
-	fmt.Printf("     %s", Magenta.Sprint("○"))
-	fmt.Printf("     %s\n", White.Sprint("○"))
+	printWithLogo(str)
 }
 
-func RandColor(s string) string {
+func randColor(s string) string {
 	l := len(Colors)
 	index := rand.Intn(l-0) + 0
 	return Colors[index].Sprint(ShortenInfo[s])
+}
+
+func printWithLogo(infos []string) {
+	beginning := fmt.Sprintf("%s %s %s %s %s\n\n", Red.Sprint("X"), Green.Sprint("────"), Yellow.Sprint("X"), Green.Sprint("────"), Blue.Sprint("X"))
+	ending := fmt.Sprintf("%s %s %s %s %s %s %s\n",
+		Red.Sprint("○"),
+		Green.Sprint("○"),
+		Blue.Sprint("○"),
+		Yellow.Sprint("○"),
+		Cyan.Sprint("○"),
+		Magenta.Sprint("○"),
+		White.Sprint("○"),
+	)
+	logo := fmt.Sprintf("%s %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s\n %s",
+		beginning,
+		infos[0],
+		infos[1],
+		infos[2],
+		infos[3],
+		infos[4],
+		infos[5],
+		infos[6],
+		infos[7],
+		infos[8],
+		infos[9],
+		infos[10],
+		infos[11],
+		ending,
+	)
+	fmt.Print(logo)
 }
