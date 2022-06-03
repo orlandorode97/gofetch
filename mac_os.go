@@ -6,7 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/OrlandoRomo/gofetch/command"
+	"github.com/orlandorode97/gofetch/command"
+	"github.com/orlandorode97/gofetch/pkg"
 	"github.com/shirou/gopsutil/mem"
 )
 
@@ -56,7 +57,7 @@ func (mac *macos) GetUptime() (string, error) {
 		return "", err
 	}
 
-	return ParseUptime(seconds)
+	return pkg.ParseUptime(seconds)
 }
 
 // GetNumberPackages return the number of packages install by homebrew
