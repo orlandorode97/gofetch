@@ -30,7 +30,3 @@ $ sudo cp gofetch /usr/local/bin
 6. Go for it:
 <img width="600" alt="Screen Shot 2022-02-14 at 15 43 03" src="https://user-images.githubusercontent.com/34588445/153951377-a0e4f52d-c56b-4d66-afe4-07f6a671d26a.png">
 
-
-## TODO
-**Print the logo of each os when `gofetch` is called**.
-
