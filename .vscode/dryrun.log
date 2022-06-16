@@ -1,0 +1,6 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/orlando.romo/go/src/gofetch'
+echo " Choose a command run in "gofetch":"
+sed -n 's/^##//p' Makefile | column -t -s ':' |  sed -e 's/^/ /'
+make: Leaving directory `/Users/orlando.romo/go/src/gofetch'
+ 

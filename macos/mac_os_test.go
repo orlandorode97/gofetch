@@ -1,4 +1,4 @@
-package gofetch
+package macos
 
 import (
 	"errors"
