@@ -1,4 +1,4 @@
-package gofetch
+package macos
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/OrlandoRomo/gofetch"
 	"github.com/OrlandoRomo/gofetch/command"
 	"github.com/shirou/gopsutil/mem"
 )
@@ -20,7 +21,7 @@ func init() {
 
 type macos struct{}
 
-func NewMacOS() command.Informer {
+func New() command.Informer {
 	return &macos{}
 }
 
@@ -56,7 +57,7 @@ func (mac *macos) GetUptime() (string, error) {
 		return "", err
 	}
 
-	return ParseUptime(seconds)
+	return gofetch.ParseUptime(seconds)
 }
 
 // GetNumberPackages return the number of packages install by homebrew

@@ -1,4 +1,4 @@
-package gofetch
+package linux
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/OrlandoRomo/gofetch"
 	"github.com/OrlandoRomo/gofetch/command"
 	"github.com/shirou/gopsutil/mem"
 )
@@ -53,12 +54,11 @@ func init() {
 		"Trinity":  "tde-config --version",
 		"Unity":    "unity --version",
 	}
-
 }
 
 type linux struct{}
 
-func NewLinux() command.Informer {
+func New() command.Informer {
 	return &linux{}
 }
 
@@ -87,7 +87,7 @@ func (l *linux) GetUptime() (string, error) {
 		return "", err
 	}
 
-	return ParseUptime(seconds)
+	return gofetch.ParseUptime(seconds)
 }
 
 // GetNumberPackages return the number of packages installed by the current package manager

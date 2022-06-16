@@ -1,4 +1,4 @@
-package gofetch
+package windows
 
 import (
 	"fmt"
@@ -10,8 +10,8 @@ import (
 
 type windows struct{}
 
-// NewWin returns an instance of the interface OSInformer
-func NewWin() command.Informer {
+// New returns an instance of the interface OSInformer
+func New() command.Informer {
 	return &windows{}
 }
 
