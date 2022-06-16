@@ -8,17 +8,11 @@ To have `gofetch` in your machine follow the next steps:
 $ git clone https://github.com/orlandorode97/gofetch.git
 ```
 2. The project contains a [Makefile](https://github.com/orlandorode97/gofetch/blob/main/Makefile) with built-in commands to create the binary for your current os and architecture.
-3. Type the command for your current os such as:
-- `build-linux-amd64`
-- `build-linux-arm`
-- `build-linux-arm64`
-- `build-mac-amd64`
-- `build-mac-arm`
-- `build-mac-arm64`
-- `build-windows-amd64`
-4. Example
+3. Type the command to build the project.
+- `build`
+5. Example
     ```sh
-    $ make build-linux-amd64
+    $ make build
     --> Building gofetch binary for linux:amd64
     --> gofetch for linux:amd64 built at /usr/home/orlandoromo/go/src/gofetch
     ```
