@@ -1,5 +1,5 @@
-# go-fetch
-go-fetch is an alternative neofetch, screenfetch, and pfetch CLI tool that retrieves the current operative system information.
+# gofetch
+gofetch is an alternative neofetch, screenfetch, and pfetch CLI tool that retrieves the current operative system information.
 
 ## Getting started
 To have `gofetch` in your machine follow the next steps:
@@ -22,5 +22,4 @@ $ sudo cp gofetch /usr/local/bin
 ```
 
 6. Go for it:
-<img width="600" alt="Screen Shot 2022-02-14 at 15 43 03" src="https://user-images.githubusercontent.com/34588445/153951377-a0e4f52d-c56b-4d66-afe4-07f6a671d26a.png">
-
+<img width="600" alt="Screen Shot 2022-02-14 at 15 43 03" src="https://user-images.githubusercontent.com/34588445/175758160-91e8232a-a25b-417b-a0d4-c3af431246c1.png">
