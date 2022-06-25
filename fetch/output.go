@@ -66,13 +66,13 @@ func Fetch(in Fetcher) {
 		function := inType.Method(i)
 		waitGroup.Add(1)
 		go func(f reflect.Method, w *sync.WaitGroup) {
-			defer waitGroup.Done()
-			result := function.Func.Call([]reflect.Value{inValue})
+			defer w.Done()
+			result := f.Func.Call([]reflect.Value{inValue})
 			output, _ := result[0].Interface().(string)
 			m.Lock()
-			defer m.Unlock()
-			name := fields[function.Name]
+			name := fields[f.Name]
 			outputFields[name] = colorOutput(output, name)
+			m.Unlock()
 		}(function, &waitGroup)
 	}
 

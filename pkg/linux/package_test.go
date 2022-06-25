@@ -78,12 +78,12 @@ func TestGetNumberPackages(t *testing.T) {
 				cs := []string{"-test.run=TestNumberPackagesHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				if currentPkgCommand == pkgManager && currentErr == 0 {
+				if currentPkgCommand == pkgManager && currentPkgErr == 0 {
 					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_MANAGER=1"}
-					currentErr = pkgErr
+					currentPkgErr = pkgErr
 					return cmd
 				}
-				if currentErr == pkgErr {
+				if currentPkgErr == pkgErr {
 					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_FAILURE=1"}
 				}
 				return cmd
@@ -103,9 +103,8 @@ func TestGetNumberPackages(t *testing.T) {
 
 			t.Cleanup(func() {
 				currentPkgCommand = pkgManager
-				currentErr = 0
+				currentPkgErr = 0
 			})
 		})
-
 	}
 }

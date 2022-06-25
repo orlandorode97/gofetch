@@ -74,7 +74,6 @@ func TestGetDesktopEnvironment(t *testing.T) {
 				}
 				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_DE_XDG_VERSION=1"}
 				return cmd
-
 			},
 		},
 		{
@@ -126,6 +125,5 @@ func TestGetDesktopEnvironment(t *testing.T) {
 				currentErr = 0
 			})
 		})
-
 	}
 }

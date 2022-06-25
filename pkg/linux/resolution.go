@@ -21,5 +21,4 @@ func (l *linux) GetResolution() string {
 	}
 
 	return resolution
-
 }

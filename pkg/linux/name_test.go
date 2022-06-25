@@ -12,7 +12,7 @@ func TestGetName(t *testing.T) {
 		UserName        string
 		Hostname        string
 		MockCurrentUser func() (*user.User, error)
-		MockHostname    func() (name string, err error)
+		MockHostname    func() (string, error)
 		Expected        string
 	}{
 		{
@@ -24,7 +24,7 @@ func TestGetName(t *testing.T) {
 					Username: "linux.user",
 				}, nil
 			},
-			MockHostname: func() (name string, err error) {
+			MockHostname: func() (string, error) {
 				return "linux.hostname", nil
 			},
 			Expected: "linux.user@linux.hostname",
@@ -34,7 +34,7 @@ func TestGetName(t *testing.T) {
 			MockCurrentUser: func() (*user.User, error) {
 				return &user.User{}, errors.New("unable to get current user")
 			},
-			MockHostname: func() (name string, err error) {
+			MockHostname: func() (string, error) {
 				return "linux.hostname", nil
 			},
 			Expected: "Unknown@linux.hostname",
