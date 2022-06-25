@@ -35,9 +35,9 @@ func (l *linux) GetDesktopEnvironment() string {
 	if err != nil {
 		return "Unknown"
 	}
-
+	xdg := strings.TrimSuffix(string(output), "\n")
 	// Some $XDG_CURRENT_DESKTOP values are like ubuntu:GNOME or simple values like Pantheon.
-	deskName := strings.Split(string(output), ":")
+	deskName := strings.Split(xdg, ":")
 	if len(deskName) != 2 {
 		return deskName[0]
 	}
@@ -49,5 +49,5 @@ func (l *linux) GetDesktopEnvironment() string {
 		return "Unknown"
 	}
 
-	return string(version)
+	return strings.TrimSuffix(string(version), "\n")
 }
