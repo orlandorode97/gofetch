@@ -17,7 +17,7 @@ help: Makefile
 ## build gofetch
 build:
 	@echo "--> Building gofetch binary for $(GOOS):$(GOARCH)"
-	@env GOOS=$(GOOS) GOACH=$(GOARCH) go build -o gofetch ./cmd/main.go
+	@env CGO_ENABLED=0 GOOS=$(GOOS) GOACH=$(GOARCH) go build -v -installsuffix cgo -o gofetch ./cmd/main.go
 	@echo "--> gofetch for $(GOOS):$(GOARCH) built at $(PWD_PROJECT)"
 
 .PHONY: build
