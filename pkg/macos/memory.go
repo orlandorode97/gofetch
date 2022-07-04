@@ -6,9 +6,11 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
+var virtualMemory = mem.VirtualMemory
+
 // GetMemoryUsage returns the memory usage of the computer.
 func (m *macos) GetMemoryUsage() string {
-	memStat, err := mem.VirtualMemory()
+	memStat, err := virtualMemory()
 	if err != nil {
 		return "Unknown"
 	}

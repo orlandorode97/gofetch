@@ -5,14 +5,19 @@ import (
 	"os/user"
 )
 
+var (
+	getCurrent  = user.Current
+	getHostname = os.Hostname
+)
+
 // GetName returns the current user name.
 func (m *macos) GetName() string {
-	user, err := user.Current()
+	user, err := getCurrent()
 	if err != nil {
 		user.Username = "Unknown"
 	}
 
-	hostname, err := os.Hostname()
+	hostname, err := getHostname()
 	if err != nil {
 		hostname = "Unknown"
 	}

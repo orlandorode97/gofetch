@@ -4,7 +4,7 @@ import "github.com/orlandorode97/gofetch/fetch"
 
 type windows struct{}
 
-// New returns an instance of the interface OSInformer
+// New returns an instance of the interface OSInformer.
 func New() fetch.Fetcher {
 	return nil
 }

@@ -12,19 +12,22 @@ var regexUptime *regexp.Regexp
 
 // GetUptime returns the up time of the current OS.
 func (m *macos) GetUptime() string {
-	regexUptime = regexp.MustCompile(`\=\s(.*.+?),`)
+	regexUptime = regexp.MustCompile(`(\d.*),`)
 
-	boot, err := execCommand("sysctl", "-n", "kern.boottime").CombinedOutput()
+	output, err := execCommand("sysctl", "-n", "kern.boottime").CombinedOutput()
 	if err != nil {
 		return "Unknown"
 	}
-	matches := regexUptime.FindStringSubmatch(string(boot))
-	if len(matches) != 0 && matches[1] == "" {
+
+	bootTime := strings.TrimSuffix(string(output), "\n")
+	if !regexUptime.MatchString(bootTime) {
 		return "Unknown"
 	}
+
+	bootTime = regexUptime.FindStringSubmatch(bootTime)[1]
 	now := `$(date +%s)`
-	seconds := fmt.Sprintf("echo $((%s - %s))", now, matches[1])
-	output, err := execCommand("bash", "-c", seconds).CombinedOutput()
+	seconds := fmt.Sprintf("echo $((%s - %s))", now, bootTime)
+	output, err = execCommand("bash", "-c", seconds).CombinedOutput()
 	if err != nil {
 		return "Unknown"
 	}

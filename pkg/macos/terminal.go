@@ -11,5 +11,14 @@ func (m *macos) GetTerminalInfo() string {
 	if err != nil {
 		return "Unknown"
 	}
-	return strings.TrimSpace(string(output))
+	shell := strings.TrimSuffix(string(output), "\n")
+	if shell != "" {
+		return shell
+	}
+	// Some shells dont't bind the env variable $TERM_PROGRAM, then is possible to use only $TERM env variable
+	output, err = execCommand("echo", os.ExpandEnv("$TERM")).CombinedOutput()
+	if err != nil {
+		return "Unknown"
+	}
+	return strings.TrimSuffix(string(output), "\n")
 }

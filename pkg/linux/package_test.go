@@ -7,16 +7,7 @@ import (
 	"testing"
 )
 
-const (
-	pkgManager int = iota + 1
-	pkgTotal
-	pkgErr
-)
-
-var (
-	currentPkgCommand = pkgManager
-	currentPkgErr     = 0
-)
+var isCurrentPkgCommand = true
 
 func TestNumberPackagesHelper(t *testing.T) {
 	if os.Getenv("GO_WANT_HELPER_PROCESS_PKG_MANAGER") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_PKG_NUMBER") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_PKG_FAILURE") != "1" {
@@ -51,9 +42,9 @@ func TestGetNumberPackages(t *testing.T) {
 				cs := []string{"-test.run=TestNumberPackagesHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				if currentPkgCommand == pkgManager {
+				if isCurrentPkgCommand {
 					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_MANAGER=1"}
-					currentPkgCommand = pkgTotal
+					isCurrentPkgCommand = false
 					return cmd
 				}
 				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_NUMBER=1"}
@@ -78,14 +69,12 @@ func TestGetNumberPackages(t *testing.T) {
 				cs := []string{"-test.run=TestNumberPackagesHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				if currentPkgCommand == pkgManager && currentPkgErr == 0 {
+				if isCurrentPkgCommand {
 					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_MANAGER=1"}
-					currentPkgErr = pkgErr
+					isCurrentPkgCommand = false
 					return cmd
 				}
-				if currentPkgErr == pkgErr {
-					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_FAILURE=1"}
-				}
+				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_FAILURE=1"}
 				return cmd
 			},
 		},
@@ -102,8 +91,7 @@ func TestGetNumberPackages(t *testing.T) {
 			}
 
 			t.Cleanup(func() {
-				currentPkgCommand = pkgManager
-				currentPkgErr = 0
+				isCurrentPkgCommand = true
 			})
 		})
 	}
