@@ -11,5 +11,7 @@ func (m *macos) GetNumberPackages() string {
 	if err != nil {
 		return "Unknown"
 	}
-	return strings.TrimSpace(string(output))
+	number := strings.TrimSuffix(string(output), "\n")
+
+	return strings.TrimSpace(number)
 }

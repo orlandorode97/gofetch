@@ -1,20 +1,26 @@
 package macos
 
 import (
+	"regexp"
 	"strings"
 )
 
+var regexCPU *regexp.Regexp
+
 // GetCPU returns the name of th CPU.
 func (m *macos) GetCPU() string {
+	regexCPU = regexp.MustCompile(`\s.*`)
 	cmd := "sysctl -a | grep machdep.cpu.brand_string"
 	output, err := execCommand("bash", "-c", cmd).CombinedOutput()
 	if err != nil {
 		return "Unknown"
 	}
 
-	splitCPU := strings.Split(string(output), ": ")
+	cpu := strings.TrimSuffix(string(output), "\n")
+	if regexCPU.MatchString(cpu) {
+		cpu = regexCPU.FindAllString(cpu, -1)[0]
+	}
 
-	CPU := strings.Replace(splitCPU[1], "\n\r", "", -1)
-	CPU = strings.TrimSpace(CPU)
-	return CPU
+	cpu = strings.TrimLeft(cpu, " ")
+	return cpu
 }

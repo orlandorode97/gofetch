@@ -7,17 +7,7 @@ import (
 	"testing"
 )
 
-const (
-	DesktopEnvironment int = iota + 1
-	XDG
-	XDGVersion
-	DEErr
-)
-
-var (
-	currentXDG = XDG
-	currentErr = 0
-)
+var isXDGCommand = true
 
 func TestDesktopEnvHelper(t *testing.T) {
 	if os.Getenv("GO_WANT_HELPER_PROCESS_DE") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_DE_XDG") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_DE_XDG_VERSION") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") != "1" {
@@ -67,9 +57,9 @@ func TestGetDesktopEnvironment(t *testing.T) {
 				cs := []string{"-test.run=TestDesktopEnvHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				if currentXDG == XDG {
+				if isXDGCommand {
 					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_DE_XDG=1"}
-					currentXDG = XDGVersion
+					isXDGCommand = false
 					return cmd
 				}
 				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_DE_XDG_VERSION=1"}
@@ -94,15 +84,12 @@ func TestGetDesktopEnvironment(t *testing.T) {
 				cs := []string{"-test.run=TestDesktopEnvHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				if currentXDG == XDG && currentErr == 0 {
+				if isXDGCommand {
 					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_DE_XDG=1"}
-					currentErr = XDGVersion
+					isXDGCommand = false
 					return cmd
 				}
-				if currentErr == XDGVersion {
-					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_FAILURE=1"}
-					return cmd
-				}
+				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_FAILURE=1"}
 				return cmd
 			},
 		},
@@ -121,8 +108,7 @@ func TestGetDesktopEnvironment(t *testing.T) {
 			}
 
 			t.Cleanup(func() {
-				currentXDG = XDG
-				currentErr = 0
+				isXDGCommand = true
 			})
 		})
 	}

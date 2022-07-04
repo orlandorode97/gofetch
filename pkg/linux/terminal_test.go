@@ -19,6 +19,7 @@ func TestTerminalHelper(t *testing.T) {
 	}
 	os.Exit(0)
 }
+
 func TestGetTerminalInfo(t *testing.T) {
 	tcs := []struct {
 		Desc            string
