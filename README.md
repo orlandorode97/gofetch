@@ -1,6 +1,9 @@
 # gofetch
 gofetch is an alternative neofetch, screenfetch, and pfetch CLI tool that retrieves the current operative system information.
 
+## Note ⚠️
+Before getting started is important that your current terminal supports `UTF-8`, otherwise, the `gopher` of the `gofetch` tool will not be encoded causing some inconsistencies.
+
 ## Getting started
 To have `gofetch` in your machine follow the next steps:
 1. Clone the project under the `$GOPATH`.
