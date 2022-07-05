@@ -10,20 +10,30 @@ var regexOS *regexp.Regexp
 
 // GetHostname returns the hostname of the linux distro.
 func (l *linux) GetOSVersion() string {
-	regexOS = regexp.MustCompile(`(NAME|VERSION)=(.+)`)
-	// To get os name and version let's use the follow command: grep -E -i -w 'VERSION|NAME' /etc/os-release.
-	output, err := execCommand("grep", "-E -i -w", "/etc/os-release").CombinedOutput()
+	regexOS = regexp.MustCompile(`[^NAME|VERSION=].+`)
+	cmd := "grep -E -i -w '%s' /etc/os-release"
+	output, err := execCommand("bash", "-c", fmt.Sprintf(cmd, "NAME")).CombinedOutput()
+	if err != nil {
+		return "Unknown"
+	}
+	name := match(output)
+
+	output, err = execCommand("bash", "-c", fmt.Sprintf(cmd, "VERSION")).CombinedOutput()
 	if err != nil {
 		return "Unknown"
 	}
 
-	osVersion := strings.TrimSuffix(string(output), "\n")
+	version := match(output)
 
-	if !regexOS.MatchString(osVersion) {
+	return name + " " + version
+}
+
+func match(input []byte) string {
+	output := strings.TrimSuffix(string(input), "\n")
+	if !regexOS.MatchString(output) {
 		return "Unknown"
 	}
-
-	matches := regexOS.FindStringSubmatch(osVersion)
-	fmt.Println(matches)
-	return strings.TrimSuffix(string(output), "\n")
+	output = regexOS.FindString(output)
+	output = strings.Trim(output, `"`)
+	return output
 }
