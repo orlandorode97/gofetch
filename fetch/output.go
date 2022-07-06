@@ -23,7 +23,7 @@ var (
 
 var gopher = `
 %s
-⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣶⣦⣄⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣶⣦⣄⠀⠀⠀⠀⠀⠀ %s
 ⠀⠀⠀⠀⢠⡶⣦⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡴⣦⠀⠀ %s
 ⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠉⠀⠀ %s
 ⠀⠀⠀⠀⠀⠀⣿⣿⣿⣟⠁⠊⣿⣿⣿⣿⣿⡏⠒⠈⣿⣿⣿⡇⠀⠀⠀ %s
@@ -44,6 +44,7 @@ func initColorFields() {
 	fields = map[string]string{
 		"GetOSVersion":          "OS",
 		"GetName":               "name",
+		"GetKernelVersion":      "kernel",
 		"GetUptime":             "uptime",
 		"GetNumberPackages":     "packages",
 		"GetShellInformation":   "shell",
@@ -92,6 +93,7 @@ func Fetch(in Fetcher) {
 		dots,
 		outputFields["name"],
 		outputFields["OS"],
+		outputFields["kernel"],
 		outputFields["uptime"],
 		outputFields["packages"],
 		outputFields["shell"],
