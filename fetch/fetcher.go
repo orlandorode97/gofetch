@@ -44,6 +44,10 @@ type Usager interface {
 	GetMemoryUsage() string
 }
 
+type Kernel interface {
+	GetKernelVersion() string
+}
+
 type Fetcher interface {
 	Versioner
 	Namer
@@ -56,4 +60,5 @@ type Fetcher interface {
 	CPU
 	GPU
 	Usager
+	Kernel
 }
