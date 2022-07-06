@@ -25,4 +25,5 @@ $ sudo cp gofetch /usr/local/bin
 ```
 
 6. Go for it:
-<img width="600" alt="Screen Shot 2022-02-14 at 15 43 03" src="https://user-images.githubusercontent.com/34588445/175758160-91e8232a-a25b-417b-a0d4-c3af431246c1.png">
+<img width="600" alt="Screen Shot 2022-02-14 at 15 43 03" src="https://user-images.githubusercontent.com/34588445/177460702-c779ab84-3bb0-4bbe-b64f-0d4d3dd1f0f6.png">
+
