@@ -1,6 +1,7 @@
 package macos
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -13,5 +14,6 @@ func (m *macos) GetNumberPackages() string {
 	}
 	number := strings.TrimSuffix(string(output), "\n")
 
-	return strings.TrimSpace(number)
+	number = strings.TrimSpace(number)
+	return fmt.Sprintf("%s (%s)", number, "brew")
 }

@@ -10,22 +10,15 @@ var regexOS *regexp.Regexp
 
 // GetHostname returns the hostname of the linux distro.
 func (l *linux) GetOSVersion() string {
-	regexOS = regexp.MustCompile(`[^NAME|VERSION=].+`)
+	regexOS = regexp.MustCompile(`[^PRETTY_NAME=].+`)
 	cmd := "grep -E -i -w '%s' /etc/os-release"
-	output, err := execCommand("bash", "-c", fmt.Sprintf(cmd, "NAME")).CombinedOutput()
+	output, err := execCommand("bash", "-c", fmt.Sprintf(cmd, "PRETTY_NAME")).CombinedOutput()
 	if err != nil {
 		return "Unknown"
 	}
 	name := match(output)
 
-	output, err = execCommand("bash", "-c", fmt.Sprintf(cmd, "VERSION")).CombinedOutput()
-	if err != nil {
-		return "Unknown"
-	}
-
-	version := match(output)
-
-	return name + " " + version
+	return name
 }
 
 func match(input []byte) string {

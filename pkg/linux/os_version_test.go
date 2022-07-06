@@ -7,17 +7,12 @@ import (
 	"testing"
 )
 
-var isOSNameCommand = true
-
 func TestOSHelper(t *testing.T) {
-	if os.Getenv("GO_WANT_HELPER_PROCESS_OS_NAME") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_OS_VERSION") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_OS_FAILURE") != "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_OS") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_OS_FAILURE") != "1" {
 		return
 	}
-	if os.Getenv("GO_WANT_HELPER_PROCESS_OS_NAME") == "1" {
-		fmt.Fprintf(os.Stdout, `NAME="Ubuntu"`)
-	}
-	if os.Getenv("GO_WANT_HELPER_PROCESS_OS_VERSION") == "1" {
-		fmt.Fprintf(os.Stdout, `VERSION="22.04 LTS (Jellyfish)"`)
+	if os.Getenv("GO_WANT_HELPER_PROCESS_OS") == "1" {
+		fmt.Fprintf(os.Stdout, `PRETTY_NAME="Ubuntu 22.04 LTS"`)
 	}
 	if os.Getenv("GO_WANT_HELPER_PROCESS_OS_FAILURE") == "1" {
 		os.Exit(1)
@@ -34,18 +29,12 @@ func TestGetOSVersion(t *testing.T) {
 	}{
 		{
 			Desc:     "success - received os",
-			Expected: "Ubuntu 22.04 LTS (Jellyfish)",
+			Expected: "Ubuntu 22.04 LTS",
 			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
 				cs := []string{"-test.run=TestOSHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				if isOSNameCommand {
-					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_OS_NAME=1"}
-					isOSNameCommand = false
-					return cmd
-				}
-
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_OS_VERSION=1"}
+				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_OS=1"}
 				return cmd
 			},
 		},
@@ -58,24 +47,6 @@ func TestGetOSVersion(t *testing.T) {
 				cmd := exec.Command(os.Args[0], cs...)
 				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_OS_FAILURE=1"}
 				return cmd
-			},
-		},
-		{
-			Desc:     "unable to get os version",
-			Expected: "Unknown",
-			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
-				cs := []string{"-test.run=TestOSHelper", "--", command}
-				cs = append(cs, args...)
-				cmd := exec.Command(os.Args[0], cs...)
-				if isOSNameCommand {
-					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_OS_NAME=1"}
-					isOSNameCommand = false
-					return cmd
-				}
-
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_OS_FAILURE=1"}
-				return cmd
-
 			},
 		},
 	}
@@ -91,10 +62,6 @@ func TestGetOSVersion(t *testing.T) {
 			if os != tc.Expected {
 				t.Fatalf("received %s but expected %s", os, tc.Expected)
 			}
-
-			t.Cleanup(func() {
-				isOSNameCommand = true
-			})
 		})
 	}
 }
