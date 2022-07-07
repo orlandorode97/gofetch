@@ -19,7 +19,10 @@ func TestNumberPackagesHelper(t *testing.T) {
 	}
 
 	if os.Getenv("GO_WANT_HELPER_PROCESS_PKG_NUMBER") == "1" {
-		fmt.Fprintf(os.Stdout, "234")
+		fmt.Fprintf(os.Stdout, `warning: database file for 'extra' does not exist
+warning: database file for 'community' does not exist
+error: failed to prepare transaction (could not find database)
+234`)
 	}
 
 	if os.Getenv("GO_WANT_HELPER_PROCESS_PKG_FAILURE") == "1" {
@@ -37,7 +40,7 @@ func TestGetNumberPackages(t *testing.T) {
 	}{
 		{
 			Desc:     "success - received number of packages",
-			Expected: "234",
+			Expected: "234 (pacman)",
 			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
 				cs := []string{"-test.run=TestNumberPackagesHelper", "--", command}
 				cs = append(cs, args...)

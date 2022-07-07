@@ -31,7 +31,7 @@ func TestGetNumberPackages(t *testing.T) {
 	}{
 		{
 			Desc:     "success - received number of packages",
-			Expected: "604",
+			Expected: "604 (brew)",
 			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
 				cs := []string{"-test.run=TestPackageHelper", "--", command}
 				cs = append(cs, args...)
