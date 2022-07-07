@@ -1,3 +1,4 @@
+![Screenshot from 2022-07-06 21-14-50](https://user-images.githubusercontent.com/34588445/177675570-225aa46c-a80e-46e9-9ca9-b92a119d2c7d.png)
 # gofetch
 gofetch is an alternative neofetch, screenfetch, and pfetch CLI tool that retrieves the current operative system information.
 
@@ -25,5 +26,4 @@ $ sudo cp gofetch /usr/local/bin
 ```
 
 6. Go for it:
-<img width="600" alt="Screen Shot 2022-02-14 at 15 43 03" src="https://user-images.githubusercontent.com/34588445/177460702-c779ab84-3bb0-4bbe-b64f-0d4d3dd1f0f6.png">
-
+<img width="600" alt="Screen Shot 2022-02-14 at 15 43 03" src="https://user-images.githubusercontent.com/34588445/177675584-51c65cac-538c-4d30-b77a-75d8c8c6f042.png">
