@@ -26,3 +26,6 @@ $ sudo cp gofetch /usr/local/bin
 
 7. Go for it:
 <img width="600" alt="Screen Shot 2022-02-14 at 15 43 03" src="https://user-images.githubusercontent.com/34588445/177675584-51c65cac-538c-4d30-b77a-75d8c8c6f042.png">
+
+# Contributions
+Contributions are very welcome :shipit:
