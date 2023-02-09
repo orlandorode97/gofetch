@@ -1,0 +1,26 @@
+name: gofetch-linter
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+jobs:
+  test:
+    name: Running linter on ${GITHUB_REF##*/}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+
+    - name: Run golangci-lint
+      uses: golangci/golangci-lint-action@v3.4.0
+    
+
+

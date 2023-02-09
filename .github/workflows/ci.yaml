@@ -1,0 +1,25 @@
+name: gofetch-ci-test
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+jobs:
+  test:
+    name: Running test on ${GITHUB_REF##*/}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+
+    - name: Test ${GITHUB_REF##*/}
+      run: make test
+    
+
