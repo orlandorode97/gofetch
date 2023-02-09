@@ -4,7 +4,7 @@ SHELL := /bin/bash
 BIN_DIR := $(CURDIR)/bin
 PROJECTNAME=$(shell basename "$(PWD)")
 PWD_PROJECT=$(shell pwd)
-LDFLAGS="-X 'main.buildTime=$(shell date)' -X 'main.lastCommit=$(shell git rev-parse HEAD)' -X 'main.semanticVersion=$(shell git describe --tags --dirty=-dev)'"
+LDFLAGS="-w -X 'main.buildTime=$(shell date)' -X 'main.lastCommit=$(shell git rev-parse HEAD)' -X 'main.semanticVersion=$(shell git describe --tags --dirty=-dev)'"
 GOOS=$(shell go env GOOS)
 GOARCH=$(shell go env GOARCH)
 
@@ -20,7 +20,7 @@ help: Makefile
 ## build gofetch
 build:
 	@echo "--> Building gofetch binary for $(GOOS):$(GOARCH)"
-	@env CGO_ENABLED=0 GOOS=$(GOOS) GOACH=$(GOARCH) go build -v -installsuffix cgo -o gofetch ./cmd/main.go
+	@env go build -ldflags $(LDFLAGS) -o gofetch ./cmd/
 	@echo "--> gofetch for $(GOOS):$(GOARCH) built at $(PWD_PROJECT)"
 
 .PHONY: build
@@ -34,6 +34,6 @@ linter:
 
 setup-linter:
 	@echo "Installing golanglint dependency"
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.51.1
 
 .PHONY: setup-linter
