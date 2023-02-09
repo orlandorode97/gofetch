@@ -37,3 +37,4 @@ setup-linter:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.51.1
 
 .PHONY: setup-linter
+
