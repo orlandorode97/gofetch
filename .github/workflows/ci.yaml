@@ -9,7 +9,7 @@ on:
       - "*"
 jobs:
   test:
-    name: Running test on ${GITHUB_REF##*/}
+    name: Running test on ${{ github.head_ref || github.ref_name }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -19,7 +19,7 @@ jobs:
       with:
         go-version: 1.19
 
-    - name: Test ${GITHUB_REF##*/}
+    - name: Test for ${{ github.head_ref || github.ref_name }}
       run: make test
     
 

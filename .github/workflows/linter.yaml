@@ -9,7 +9,7 @@ on:
       - "*"
 jobs:
   test:
-    name: Running linter on ${GITHUB_REF##*/}
+    name: Running linter on ${{ github.head_ref || github.ref_name }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
