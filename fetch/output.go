@@ -21,6 +21,10 @@ var (
 	fields  map[string]string
 )
 
+func init() {
+	initColorFields()
+}
+
 var gopher = `
 %s
 ⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣶⣦⣄⠀⠀⠀⠀⠀⠀ %s
@@ -58,7 +62,6 @@ func initColorFields() {
 }
 
 func Fetch(in Fetcher) {
-	initColorFields()
 	waitGroup := sync.WaitGroup{}
 	var m sync.Mutex
 	inType, inValue := reflect.TypeOf(in), reflect.ValueOf(in)
@@ -108,11 +111,11 @@ func Fetch(in Fetcher) {
 }
 
 func colorOutput(output, fieldName string) string {
-	color := randColor()
+	color := RandColor()
 	return fmt.Sprintf("%s %s %s", color.Sprint(fieldName), "~", output)
 }
 
-func randColor() *color.Color {
+func RandColor() *color.Color {
 	l := len(Colors)
 	index := rand.Intn(l)
 	return Colors[index]

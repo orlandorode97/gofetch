@@ -14,8 +14,11 @@ import (
 
 func main() {
 	gofetch := &cli.App{
+		Commands: []*cli.Command{
+			newVersionCommand(),
+		},
 		Name:   "gofetch",
-		Usage:  "fetch os information",
+		Usage:  "fetches os information",
 		Action: Fetch,
 	}
 	if err := gofetch.Run(os.Args); err != nil {
