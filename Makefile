@@ -26,7 +26,7 @@ build:
 .PHONY: build
 
 ## run linter
-linter:
+linter: setup-linter
 	@echo "Checking code"
 	$(BIN_DIR)/golangci-lint run $(CURDIR)/...
 
@@ -35,6 +35,10 @@ linter:
 setup-linter:
 	@echo "Installing golanglint dependency"
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.51.1
+
+test:
+	@echo "Running all tests"
+	go test -v ./...
 
 .PHONY: setup-linter
 

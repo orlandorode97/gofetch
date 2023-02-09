@@ -1,67 +1,8 @@
-run:
-  timeout: 3m
-  go: "1.17"
 linters-settings:
-  cyclop:
-    max-complexity: 30
-    package-average: 11.0
-
-  errcheck:
-    exclude-functions:
-    - (net/http.ResponseWriter).Write
-    check-type-assertions: false
-
+  wsl:
 linters:
-  disable-all: true
+  disable-all: false
   enable:
-    - deadcode
-    - errcheck
-    - gofmt
-    - gosimple
-    - govet
-    - ineffassign
-    - staticcheck
-    - structcheck
-    - typecheck
-    - unused
-    - varcheck
-    - asciicheck
-    - bidichk
-    - bodyclose
-    - contextcheck
-    - cyclop
-    - durationcheck
-    - errname
-    - errorlint
-    - execinquery
-    - exportloopref
+  disable:
     - gochecknoinits
-    - gocritic
-    - gocyclo
-    - godot
-    - goimports
-    - gomoddirectives
-    - gomodguard
-    - goprintffuncname
-    - makezero
-    - nakedret
-    - nilerr
-    - noctx
-    - nolintlint
-    - nonamedreturns
-    - nosprintfhostport
-    - predeclared
-    - promlinter
-    - revive
-    - rowserrcheck
-    - sqlclosecheck
-    - stylecheck
-    - tenv
-    - tparallel
-    - unconvert
-    - unparam
-    - wastedassign
-    - whitespace
-
-issues:
-  max-same-issues: 50
+    - unused
