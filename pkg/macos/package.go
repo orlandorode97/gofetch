@@ -7,7 +7,7 @@ import (
 
 // GetNumberPackages return the number of packages installed by the current package manager.
 func (m *macos) GetNumberPackages() string {
-	cmd := "ls /usr/local/Cellar/ | wc -l"
+	cmd := "brew list | wc -l"
 	output, err := execCommand("bash", "-c", cmd).Output()
 	if err != nil {
 		return "Unknown"
