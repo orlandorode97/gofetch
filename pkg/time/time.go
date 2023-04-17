@@ -15,5 +15,5 @@ func ParseUptime(s string) string {
 	hours := seconds / 60 / 60 % 24
 	days := seconds / 60 / 60 / 24
 
-	return fmt.Sprintf("%d day(s), %d hour(s), %d minutes(s)", days, hours, minutes)
+	return fmt.Sprintf("%d day(s), %d hour(s), %d minute(s)", days, hours, minutes)
 }

@@ -14,15 +14,15 @@ func (w *windows) GetNumberPackages() string {
 
 	cmd = "where choco"
 	result, err = countPackages(cmd, "choco")
-	if err != nil {
-		return "Unknown"
+	if err == nil {
+		return result
 	}
 
-	return result
+	return "Unknown"
 }
 
 func countPackages(cmd, pkgManagerName string) (string, error) {
-	_, err := execCommand("cmd", "/c", cmd).Output()
+	_, err := execCommand("cmd", "/c", cmd).CombinedOutput()
 	if err != nil {
 		return "Unknown", err
 	}

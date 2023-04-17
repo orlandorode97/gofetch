@@ -35,7 +35,7 @@ func TestGetUptime(t *testing.T) {
 	}{
 		{
 			Desc:     "success - received uptime",
-			Expected: "1 day(s), 10 hour(s), 17 minutes(s)",
+			Expected: "1 day(s), 10 hour(s), 17 minute(s)",
 			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
 				cs := []string{"-test.run=TestUptimeHelper", "--", command}
 				cs = append(cs, args...)
