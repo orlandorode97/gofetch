@@ -54,13 +54,13 @@ func TestGetCPU(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand
 			windows := New()
 			cpu := windows.GetCPU()
-			if cpu != tc.Expected {
-				t.Fatalf("received %s but expected %s", cpu, tc.Expected)
+			if cpu != tt.Expected {
+				t.Fatalf("received %s but expected %s", cpu, tt.Expected)
 			}
 		})
 	}

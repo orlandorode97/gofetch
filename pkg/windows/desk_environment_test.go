@@ -85,13 +85,13 @@ func TestGetDesktopEnvironment(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand
 			windows := New()
 			os := windows.GetDesktopEnvironment()
-			if os != tc.Expected {
-				t.Fatalf("received %s but expected %s", os, tc.Expected)
+			if os != tt.Expected {
+				t.Fatalf("received %s but expected %s", os, tt.Expected)
 			}
 		})
 	}

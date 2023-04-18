@@ -39,7 +39,7 @@ func (l *linux) GetNumberPackages() string {
 	initPkgCommands()
 
 	output, err := execCommand("bash", "-c", NetPackage).CombinedOutput()
-	if len(output) == 0 || err != nil {
+	if err != nil {
 		return "Unknown"
 	}
 	pkgManager := strings.TrimSuffix(string(output), "\n")

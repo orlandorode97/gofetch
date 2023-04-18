@@ -8,7 +8,7 @@ import (
 )
 
 func TestPackageHelper(t *testing.T) {
-	if os.Getenv("GO_WANT_HELPER_PROCESS_PKG") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_PKG_FAILURE") != "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_PKG") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") != "1" {
 		return
 	}
 
@@ -16,7 +16,7 @@ func TestPackageHelper(t *testing.T) {
 		fmt.Fprintf(os.Stdout, "        604")
 	}
 
-	if os.Getenv("GO_WANT_HELPER_PROCESS_PKG_FAILURE") == "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") == "1" {
 		os.Exit(1)
 	}
 
@@ -47,22 +47,19 @@ func TestGetNumberPackages(t *testing.T) {
 				cs := []string{"-test.run=TestPackageHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_FAILURE=1"}
+				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_FAILURE=1"}
 				return cmd
 			},
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
-			defer func() {
-				execCommand = exec.Command
-			}()
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand
 			mac := New()
 			number := mac.GetNumberPackages()
-			if number != tc.Expected {
-				t.Fatalf("received %s but expected %s", number, tc.Expected)
+			if number != tt.Expected {
+				t.Fatalf("received %s but expected %s", number, tt.Expected)
 			}
 		})
 	}

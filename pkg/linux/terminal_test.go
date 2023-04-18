@@ -8,13 +8,14 @@ import (
 )
 
 func TestTerminalHelper(t *testing.T) {
-	if os.Getenv("GO_WANT_HELPER_PROCESS_TERMINAL") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_TERMINAL_FAILURE") != "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_TERMINAL") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") != "1" {
 		return
 	}
 	if os.Getenv("GO_WANT_HELPER_PROCESS_TERMINAL") == "1" {
 		fmt.Fprintf(os.Stdout, "Alacritty")
 	}
-	if os.Getenv("GO_WANT_HELPER_PROCESS_TERMINAL_FAILURE") == "1" {
+
+	if os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") == "1" {
 		os.Exit(1)
 	}
 	os.Exit(0)
@@ -44,21 +45,21 @@ func TestGetTerminalInfo(t *testing.T) {
 				cs := []string{"-test.run=TestTerminalHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_TERMINAL_FAILURE=1"}
+				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_FAILURE=1"}
 				return cmd
 			},
 		},
 	}
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand
 			defer func() {
 				execCommand = exec.Command
 			}()
 			linux := New()
 			terminal := linux.GetTerminalInfo()
-			if terminal != tc.Expected {
-				t.Fatalf("received %s but expected %s", terminal, tc.Expected)
+			if terminal != tt.Expected {
+				t.Fatalf("received %s but expected %s", terminal, tt.Expected)
 			}
 		})
 	}

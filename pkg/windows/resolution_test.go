@@ -109,13 +109,13 @@ func TestGetResolution(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand(tc.EnvCommands)
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand(tt.EnvCommands)
 			windows := New()
 			resolution := windows.GetResolution()
-			if resolution != tc.Expected {
-				t.Fatalf("received %s but expected %s", resolution, tc.Expected)
+			if resolution != tt.Expected {
+				t.Fatalf("received %s but expected %s", resolution, tt.Expected)
 			}
 		})
 	}

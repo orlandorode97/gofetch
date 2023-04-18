@@ -10,7 +10,7 @@ import (
 var isBootTimeCommand = true
 
 func TestUptimeHelper(t *testing.T) {
-	if os.Getenv("GO_WANT_HELPER_PROCESS_UPTIME_BOOTTIME") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_UPTIME") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_UPTIME_FAILURE") != "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_UPTIME_BOOTTIME") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_UPTIME") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") != "1" {
 		return
 	}
 	if os.Getenv("GO_WANT_HELPER_PROCESS_UPTIME_BOOTTIME") == "1" {
@@ -21,7 +21,7 @@ func TestUptimeHelper(t *testing.T) {
 		fmt.Fprintf(os.Stdout, "123456")
 	}
 
-	if os.Getenv("GO_WANT_HELPER_PROCESS_UPTIME_FAILURE") == "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") == "1" {
 		os.Exit(1)
 	}
 
@@ -31,68 +31,72 @@ func TestGetUptime(t *testing.T) {
 	tcs := []struct {
 		Desc            string
 		Expected        string
-		FakeExecCommand func(command string, args ...string) *exec.Cmd
+		EnvCommands     []string
+		FakeExecCommand func(envs []string) func(command string, arg ...string) *exec.Cmd
 	}{
 		{
 			Desc:     "success - received uptime",
 			Expected: "1 day(s), 10 hour(s), 17 minute(s)",
-			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
-				cs := []string{"-test.run=TestUptimeHelper", "--", command}
-				cs = append(cs, args...)
-				cmd := exec.Command(os.Args[0], cs...)
-				if isBootTimeCommand {
-					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_UPTIME_BOOTTIME=1"}
-					isBootTimeCommand = false
+			EnvCommands: []string{
+				"GO_WANT_HELPER_PROCESS_UPTIME_BOOTTIME=1",
+				"GO_WANT_HELPER_PROCESS_UPTIME=1",
+			},
+			FakeExecCommand: func(envs []string) func(command string, arg ...string) *exec.Cmd {
+				return func(command string, args ...string) *exec.Cmd {
+					cs := []string{"-test.run=TestUptimeHelper", "--", command}
+					cs = append(cs, args...)
+					cmd := exec.Command(os.Args[0], cs...)
+					cmd.Env = envs
+					envs = envs[1:]
 					return cmd
 				}
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_UPTIME=1"}
-				return cmd
 			},
 		},
 		{
 			Desc:     "failure - unable to get boot time",
 			Expected: "Unknown",
-			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
-				cs := []string{"-test.run=TestUptimeHelper", "--", command}
-				cs = append(cs, args...)
-				cmd := exec.Command(os.Args[0], cs...)
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_UPTIME_FAILURE=1"}
-				return cmd
+			EnvCommands: []string{
+				"GO_WANT_HELPER_PROCESS_FAILURE=1",
+			},
+			FakeExecCommand: func(envs []string) func(command string, arg ...string) *exec.Cmd {
+				return func(command string, args ...string) *exec.Cmd {
+					cs := []string{"-test.run=TestUptimeHelper", "--", command}
+					cs = append(cs, args...)
+					cmd := exec.Command(os.Args[0], cs...)
+					cmd.Env = envs
+					envs = envs[1:]
+					return cmd
+				}
 			},
 		},
 		{
 			Desc:     "failure - unable to get uptime in seconds",
 			Expected: "Unknown",
-			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
-				cs := []string{"-test.run=TestUptimeHelper", "--", command}
-				cs = append(cs, args...)
-				cmd := exec.Command(os.Args[0], cs...)
-				if isBootTimeCommand {
-					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_UPTIME_BOOTTIME=1"}
-					isBootTimeCommand = false
+			EnvCommands: []string{
+				"GO_WANT_HELPER_PROCESS_UPTIME_BOOTTIME=1",
+				"GO_WANT_HELPER_PROCESS_FAILURE=1",
+			},
+			FakeExecCommand: func(envs []string) func(command string, arg ...string) *exec.Cmd {
+				return func(command string, args ...string) *exec.Cmd {
+					cs := []string{"-test.run=TestUptimeHelper", "--", command}
+					cs = append(cs, args...)
+					cmd := exec.Command(os.Args[0], cs...)
+					cmd.Env = envs
+					envs = envs[1:]
 					return cmd
 				}
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_UPTIME_FAILURE=1"}
-				return cmd
 			},
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
-			defer func() {
-				execCommand = exec.Command
-			}()
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand(tt.EnvCommands)
 			mac := New()
 			uptime := mac.GetUptime()
-			if uptime != tc.Expected {
-				t.Fatalf("received %s but expected %s", uptime, tc.Expected)
+			if uptime != tt.Expected {
+				t.Fatalf("received %s but expected %s", uptime, tt.Expected)
 			}
-
-			t.Cleanup(func() {
-				isBootTimeCommand = true
-			})
 		})
 	}
 }
