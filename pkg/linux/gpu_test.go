@@ -8,7 +8,7 @@ import (
 )
 
 func TestGPUHelper(t *testing.T) {
-	if os.Getenv("GO_WANT_HELPER_PROCESS_GPU_VGA") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_GPU_3D") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_GPU_DISPLAY") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_GPU_FAILURE") != "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_GPU_VGA") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_GPU_3D") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_GPU_DISPLAY") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") != "1" {
 		return
 	}
 
@@ -24,7 +24,7 @@ func TestGPUHelper(t *testing.T) {
 		fmt.Fprintf(os.Stdout, "00:0e.1 Display controller: AMD Radeon RX 5600 XT (rev 01)")
 	}
 
-	if os.Getenv("GO_WANT_HELPER_PROCESS_GPU_FAILURE") == "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") == "1" {
 		os.Exit(1)
 	}
 
@@ -77,22 +77,19 @@ func TestGetGPU(t *testing.T) {
 				cs := []string{"-test.run=TestGPUHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_GPU_FAILURE=1"}
+				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_FAILURE=1"}
 				return cmd
 			},
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
-			defer func() {
-				execCommand = exec.Command
-			}()
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand
 			linux := New()
 			gpu := linux.GetGPU()
-			if gpu != tc.Expected {
-				t.Fatalf("received %s but expected %s", gpu, tc.Expected)
+			if gpu != tt.Expected {
+				t.Fatalf("received %s but expected %s", gpu, tt.Expected)
 			}
 		})
 	}

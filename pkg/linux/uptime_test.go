@@ -8,7 +8,7 @@ import (
 )
 
 func TestUptimeHelper(t *testing.T) {
-	if os.Getenv("GO_WANT_HELPER_PROCESS_UPTIME") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_UPTIME_FAILURE") != "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_UPTIME") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") != "1" {
 		return
 	}
 
@@ -16,7 +16,7 @@ func TestUptimeHelper(t *testing.T) {
 		fmt.Fprintf(os.Stdout, "123456")
 	}
 
-	if os.Getenv("GO_WANT_HELPER_PROCESS_UPTIME_FAILURE") == "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") == "1" {
 		os.Exit(1)
 	}
 
@@ -46,22 +46,22 @@ func TestGetUptime(t *testing.T) {
 				cs := []string{"-test.run=TestUptimeHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_UPTIME_FAILURE=1"}
+				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_FAILURE=1"}
 				return cmd
 			},
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand
 			defer func() {
 				execCommand = exec.Command
 			}()
 			linux := New()
 			uptime := linux.GetUptime()
-			if uptime != tc.Expected {
-				t.Fatalf("received %s but expected %s", uptime, tc.Expected)
+			if uptime != tt.Expected {
+				t.Fatalf("received %s but expected %s", uptime, tt.Expected)
 			}
 		})
 	}

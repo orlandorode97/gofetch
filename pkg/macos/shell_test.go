@@ -8,7 +8,7 @@ import (
 )
 
 func TestShellHelper(t *testing.T) {
-	if os.Getenv("GO_WANT_HELPER_PROCESS_SHELL") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_SHELL_FAILURE") != "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_SHELL") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") != "1" {
 		return
 	}
 
@@ -16,7 +16,7 @@ func TestShellHelper(t *testing.T) {
 		fmt.Fprintf(os.Stdout, "/usr/bin/zsh 5.19.4 (x86_darwin)")
 	}
 
-	if os.Getenv("GO_WANT_HELPER_PROCESS_SHELL_FAILURE") == "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") == "1" {
 		os.Exit(1)
 	}
 
@@ -46,22 +46,19 @@ func TestGetShellInformation(t *testing.T) {
 				cs := []string{"-test.run=TestShellHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_SHELL_FAILURE=1"}
+				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_FAILURE=1"}
 				return cmd
 			},
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
-			defer func() {
-				execCommand = exec.Command
-			}()
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand
 			mac := New()
 			uptime := mac.GetShellInformation()
-			if uptime != tc.Expected {
-				t.Fatalf("received %s but expected %s", uptime, tc.Expected)
+			if uptime != tt.Expected {
+				t.Fatalf("received %s but expected %s", uptime, tt.Expected)
 			}
 		})
 	}

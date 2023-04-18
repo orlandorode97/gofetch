@@ -7,26 +7,31 @@ import (
 	"testing"
 )
 
-var isCurrentPkgCommand = true
-
 func TestNumberPackagesHelper(t *testing.T) {
-	if os.Getenv("GO_WANT_HELPER_PROCESS_PKG_MANAGER") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_PKG_NUMBER") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_PKG_FAILURE") != "1" {
+	defer t.Cleanup(func() { // Clean standard output since after running this helper it ends with "PASS"
+		os.Stdout = nil
+	})
+
+	if os.Getenv("GO_WANT_HELPER_PROCESS_PKG_MANAGER") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_PKG_NUMBER") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") != "1" {
 		return
 	}
 
 	if os.Getenv("GO_WANT_HELPER_PROCESS_PKG_MANAGER") == "1" {
-		fmt.Fprintf(os.Stdout, "/usr/bin/pacman")
+		fmt.Fprintf(os.Stderr, "/usr/bin/pacman")
+		return
 	}
 
 	if os.Getenv("GO_WANT_HELPER_PROCESS_PKG_NUMBER") == "1" {
-		fmt.Fprintf(os.Stdout, `warning: database file for 'extra' does not exist
+		fmt.Fprintf(os.Stderr, `warning: database file for 'extra' does not exist
 warning: database file for 'community' does not exist
 error: failed to prepare transaction (could not find database)
 234`)
+		return
 	}
 
-	if os.Getenv("GO_WANT_HELPER_PROCESS_PKG_FAILURE") == "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") == "1" {
 		os.Exit(1)
+		return
 	}
 
 	os.Exit(0)
@@ -36,66 +41,72 @@ func TestGetNumberPackages(t *testing.T) {
 	tcs := []struct {
 		Desc            string
 		Expected        string
-		FakeExecCommand func(command string, args ...string) *exec.Cmd
+		EnvCommands     []string
+		FakeExecCommand func(envs []string) func(command string, arg ...string) *exec.Cmd
 	}{
 		{
 			Desc:     "success - received number of packages",
 			Expected: "234 (pacman)",
-			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
-				cs := []string{"-test.run=TestNumberPackagesHelper", "--", command}
-				cs = append(cs, args...)
-				cmd := exec.Command(os.Args[0], cs...)
-				if isCurrentPkgCommand {
-					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_MANAGER=1"}
-					isCurrentPkgCommand = false
+			EnvCommands: []string{
+				"GO_WANT_HELPER_PROCESS_PKG_MANAGER=1",
+				"GO_WANT_HELPER_PROCESS_PKG_NUMBER=1",
+			},
+			FakeExecCommand: func(envs []string) func(command string, arg ...string) *exec.Cmd {
+				return func(command string, args ...string) *exec.Cmd {
+					cs := []string{"-test.run=TestNumberPackagesHelper", "--", command}
+					cs = append(cs, args...)
+					cmd := exec.Command(os.Args[0], cs...)
+					cmd.Env = envs
+					envs = envs[1:]
 					return cmd
 				}
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_NUMBER=1"}
-				return cmd
 			},
 		},
 		{
 			Desc:     "failed - unable to get current package manager",
 			Expected: "Unknown",
-			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
-				cs := []string{"-test.run=TestNumberPackagesHelper", "--", command}
-				cs = append(cs, args...)
-				cmd := exec.Command(os.Args[0], cs...)
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_FAILURE=1"}
-				return cmd
+			EnvCommands: []string{
+				"GO_WANT_HELPER_PROCESS_PKG_FAILURE=1",
+			},
+			FakeExecCommand: func(envs []string) func(command string, arg ...string) *exec.Cmd {
+				return func(command string, args ...string) *exec.Cmd {
+					cs := []string{"-test.run=TestNumberPackagesHelper", "--", command}
+					cs = append(cs, args...)
+					cmd := exec.Command(os.Args[0], cs...)
+					cmd.Env = envs
+					envs = envs[1:]
+					return cmd
+				}
 			},
 		},
 		{
 			Desc:     "failed - unable to get the total of the packages",
 			Expected: "Unknown",
-			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
-				cs := []string{"-test.run=TestNumberPackagesHelper", "--", command}
-				cs = append(cs, args...)
-				cmd := exec.Command(os.Args[0], cs...)
-				if isCurrentPkgCommand {
-					cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_MANAGER=1"}
-					isCurrentPkgCommand = false
+			EnvCommands: []string{
+				"GO_WANT_HELPER_PROCESS_PKG_MANAGER=1",
+				"GO_WANT_HELPER_PROCESS_FAILURE=1",
+			},
+			FakeExecCommand: func(envs []string) func(command string, arg ...string) *exec.Cmd {
+				return func(command string, args ...string) *exec.Cmd {
+					cs := []string{"-test.run=TestNumberPackagesHelper", "--", command}
+					cs = append(cs, args...)
+					cmd := exec.Command(os.Args[0], cs...)
+					cmd.Env = envs
+					envs = envs[1:]
 					return cmd
 				}
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_PKG_FAILURE=1"}
-				return cmd
 			},
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
-
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand(tt.EnvCommands)
 			linux := New()
 			total := linux.GetNumberPackages()
-			if total != tc.Expected {
-				t.Fatalf("received %s but expected %s", total, tc.Expected)
+			if total != tt.Expected {
+				t.Fatalf("received %s but expected %s", total, tt.Expected)
 			}
-
-			t.Cleanup(func() {
-				isCurrentPkgCommand = true
-			})
 		})
 	}
 }

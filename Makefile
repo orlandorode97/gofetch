@@ -20,7 +20,11 @@ help: Makefile
 ## build gofetch
 build:
 	@echo "--> Building gofetch binary for $(GOOS):$(GOARCH)"
-	@env go build -ldflags $(LDFLAGS) -o gofetch ./cmd/
+	@if [ $(GOOS) = "windows" ]; then\
+	  env go build -ldflags $(LDFLAGS) -o gofetch.exe ./cmd/;\
+  else\
+	  env go build -ldflags $(LDFLAGS) -o gofetch ./cmd/;\
+  fi
 	@echo "--> gofetch for $(GOOS):$(GOARCH) built at $(PWD_PROJECT)"
 
 .PHONY: build
@@ -36,7 +40,7 @@ setup-linter:
 	@echo "Installing golanglint dependency"
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.51.1
 
-test:
+test: linter
 	@echo "Running all tests"
 	go test -v ./...
 

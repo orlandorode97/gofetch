@@ -15,12 +15,12 @@ func TestTerminal(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
 			windows := New()
 			terminal := windows.GetTerminalInfo()
-			if terminal != tc.Expected {
-				t.Fatalf("received %s but expected %s", terminal, tc.Expected)
+			if terminal != tt.Expected {
+				t.Fatalf("received %s but expected %s", terminal, tt.Expected)
 			}
 		})
 	}
