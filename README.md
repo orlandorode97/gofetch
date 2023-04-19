@@ -25,7 +25,7 @@ $ git clone https://github.com/orlandorode97/gofetch.git
 $ sudo cp gofetch /usr/local/bin
 ```
 
-7. Go for it:
+7. Go for it (animation created with [vsh](https://github.com/charmbracelet/vhs)):
 <img width="600" alt="Screen Shot 2022-02-14 at 15 43 03" src="gofetch.gif">
 
 # Contributions
