@@ -54,13 +54,13 @@ func TestGetName(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tcs {
-		getCurrent, getHostname = tc.MockCurrentUser, tc.MockHostname
-		t.Run(tc.Desc, func(t *testing.T) {
+	for _, tt := range tcs {
+		getCurrent, getHostname = tt.MockCurrentUser, tt.MockHostname
+		t.Run(tt.Desc, func(t *testing.T) {
 			windows := New()
 			name := windows.GetName()
-			if name != tc.Expected {
-				t.Fatalf("received %s but expected %s", name, tc.Expected)
+			if name != tt.Expected {
+				t.Fatalf("received %s but expected %s", name, tt.Expected)
 			}
 		})
 	}

@@ -86,12 +86,21 @@ func TestGetDesktopEnvironment(t *testing.T) {
 	}
 
 	for _, tt := range tcs {
+<<<<<<< HEAD:pkg/windows/desktop_environment_test.go
 		t.Run(tt.desc, func(t *testing.T) {
 			execCommand = tt.fakeExecCommand
 			windows := New()
 			os := windows.GetDesktopEnvironment()
 			if os != tt.expected {
 				t.Fatalf("received %s but expected %s", os, tt.expected)
+=======
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand
+			windows := New()
+			os := windows.GetDesktopEnvironment()
+			if os != tt.Expected {
+				t.Fatalf("received %s but expected %s", os, tt.Expected)
+>>>>>>> main:pkg/windows/desk_environment_test.go
 			}
 		})
 	}

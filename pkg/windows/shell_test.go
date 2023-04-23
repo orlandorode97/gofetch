@@ -15,12 +15,12 @@ func TestGetShell(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
 			windows := New()
 			shell := windows.GetShellInformation()
-			if shell != tc.Expected {
-				t.Fatalf("received %s but expected %s", shell, tc.Expected)
+			if shell != tt.Expected {
+				t.Fatalf("received %s but expected %s", shell, tt.Expected)
 			}
 		})
 	}

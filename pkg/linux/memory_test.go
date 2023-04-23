@@ -32,13 +32,13 @@ func TestGetMemoryUsage(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			virtualMemory = tc.VirtualMemory
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			virtualMemory = tt.VirtualMemory
 			linux := New()
 			memory := linux.GetMemoryUsage()
-			if memory != tc.Expected {
-				t.Fatalf("received %s but expected %s", memory, tc.Expected)
+			if memory != tt.Expected {
+				t.Fatalf("received %s but expected %s", memory, tt.Expected)
 			}
 		})
 	}

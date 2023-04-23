@@ -51,13 +51,13 @@ func TestGetUptime(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand
 			windows := New()
 			uptime := windows.GetUptime()
-			if uptime != tc.Expected {
-				t.Fatalf("received %s but expected %s", uptime, tc.Expected)
+			if uptime != tt.Expected {
+				t.Fatalf("received %s but expected %s", uptime, tt.Expected)
 			}
 		})
 	}

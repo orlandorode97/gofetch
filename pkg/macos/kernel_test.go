@@ -8,7 +8,7 @@ import (
 )
 
 func TestKernelHelper(t *testing.T) {
-	if os.Getenv("GO_WANT_HELPER_PROCCES_KERNEL") != "1" && os.Getenv("GO_WANT_HELPER_PROCCES_KERNEL_FAILURE") != "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCCES_KERNEL") != "1" && os.Getenv("GO_WANT_HELPER_PROCCES_FAILURE") != "1" {
 		return
 	}
 
@@ -16,7 +16,7 @@ func TestKernelHelper(t *testing.T) {
 		fmt.Fprintf(os.Stdout, "Kernel version 21.5.0: Tue Apr 26 21:08:22 PDT 2022; root:xnu-8020.121.3~4/RELEASE_X86_64 ")
 	}
 
-	if os.Getenv("GO_WANT_HELPER_PROCCES_KERNEL_FAILURE") == "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCCES_FAILURE") == "1" {
 		os.Exit(1)
 	}
 
@@ -47,22 +47,19 @@ func TestGetKernelVersion(t *testing.T) {
 				cs := []string{"-test.run=TestKernelHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				cmd.Env = []string{"GO_WANT_HELPER_PROCCES_KERNEL_FAILURE=1"}
+				cmd.Env = []string{"GO_WANT_HELPER_PROCCES_FAILURE=1"}
 				return cmd
 			},
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
-			defer func() {
-				execCommand = exec.Command
-			}()
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand
 			mac := New()
 			cpu := mac.GetKernelVersion()
-			if cpu != tc.Expected {
-				t.Fatalf("received %s but expected %s", cpu, tc.Expected)
+			if cpu != tt.Expected {
+				t.Fatalf("received %s but expected %s", cpu, tt.Expected)
 			}
 		})
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 func TestCPUHelper(t *testing.T) {
-	if os.Getenv("GO_WANT_HELPER_PROCESS_CPU") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_BIOS_CPU") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_CPU_FAILURE") != "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_CPU") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_BIOS_CPU") != "1" && os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") != "1" {
 		return
 	}
 
@@ -21,7 +21,7 @@ func TestCPUHelper(t *testing.T) {
 		BIOS Model name:		pc-i44f2-12345`)
 	}
 
-	if os.Getenv("GO_WANT_HELPER_PROCESS_CPU_FAILURE") == "1" {
+	if os.Getenv("GO_WANT_HELPER_PROCESS_FAILURE") == "1" {
 		os.Exit(1)
 	}
 
@@ -63,22 +63,19 @@ func TestGetCPU(t *testing.T) {
 				cs := []string{"-test.run=TestCPUHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
-				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_CPU_FAILURE=1"}
+				cmd.Env = []string{"GO_WANT_HELPER_PROCESS_FAILURE=1"}
 				return cmd
 			},
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
-			defer func() {
-				execCommand = exec.Command
-			}()
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand
 			linux := New()
 			cpu := linux.GetCPU()
-			if cpu != tc.Expected {
-				t.Fatalf("received %s but expected %s", cpu, tc.Expected)
+			if cpu != tt.Expected {
+				t.Fatalf("received %s but expected %s", cpu, tt.Expected)
 			}
 		})
 	}

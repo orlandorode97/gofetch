@@ -132,13 +132,13 @@ func TestGetNumberPackages(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand(tc.EnvCommands)
+	for _, tt := range tcs {
+		t.Run(tt.Desc, func(t *testing.T) {
+			execCommand = tt.FakeExecCommand(tt.EnvCommands)
 			windows := New()
 			total := windows.GetNumberPackages()
-			if total != tc.Expected {
-				t.Fatalf("received %s but expected %s", total, tc.Expected)
+			if total != tt.Expected {
+				t.Fatalf("received %s but expected %s", total, tt.Expected)
 			}
 		})
 	}
