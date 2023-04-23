@@ -35,14 +35,14 @@ func TestDesktopEnvHelper(t *testing.T) {
 
 func TestGetDesktopEnvironment(t *testing.T) {
 	tcs := []struct {
-		Desc            string
-		Expected        string
-		FakeExecCommand func(command string, args ...string) *exec.Cmd
+		desc            string
+		expected        string
+		fakeExecCommand func(command string, args ...string) *exec.Cmd
 	}{
 		{
-			Desc:     "success - received desktop for windows 10",
-			Expected: "Fluent",
-			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
+			desc:     "success - received desktop for windows 10",
+			expected: "Fluent",
+			fakeExecCommand: func(command string, args ...string) *exec.Cmd {
 				cs := []string{"-test.run=TestDesktopEnvHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
@@ -51,9 +51,9 @@ func TestGetDesktopEnvironment(t *testing.T) {
 			},
 		},
 		{
-			Desc:     "success - received desktop environment for windows 8",
-			Expected: "Metro",
-			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
+			desc:     "success - received desktop environment for windows 8",
+			expected: "Metro",
+			fakeExecCommand: func(command string, args ...string) *exec.Cmd {
 				cs := []string{"-test.run=TestDesktopEnvHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
@@ -62,9 +62,9 @@ func TestGetDesktopEnvironment(t *testing.T) {
 			},
 		},
 		{
-			Desc:     "success - received desktop environment for any windows version",
-			Expected: "Aero",
-			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
+			desc:     "success - received desktop environment for any windows version",
+			expected: "Aero",
+			fakeExecCommand: func(command string, args ...string) *exec.Cmd {
 				cs := []string{"-test.run=TestDesktopEnvHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
@@ -73,9 +73,9 @@ func TestGetDesktopEnvironment(t *testing.T) {
 			},
 		},
 		{
-			Desc:     "unable to desktop environment name",
-			Expected: "Unknown",
-			FakeExecCommand: func(command string, args ...string) *exec.Cmd {
+			desc:     "unable to desktop environment name",
+			expected: "Unknown",
+			fakeExecCommand: func(command string, args ...string) *exec.Cmd {
 				cs := []string{"-test.run=TestDesktopEnvHelper", "--", command}
 				cs = append(cs, args...)
 				cmd := exec.Command(os.Args[0], cs...)
@@ -85,13 +85,13 @@ func TestGetDesktopEnvironment(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tcs {
-		t.Run(tc.Desc, func(t *testing.T) {
-			execCommand = tc.FakeExecCommand
+	for _, tt := range tcs {
+		t.Run(tt.desc, func(t *testing.T) {
+			execCommand = tt.fakeExecCommand
 			windows := New()
 			os := windows.GetDesktopEnvironment()
-			if os != tc.Expected {
-				t.Fatalf("received %s but expected %s", os, tc.Expected)
+			if os != tt.expected {
+				t.Fatalf("received %s but expected %s", os, tt.expected)
 			}
 		})
 	}
