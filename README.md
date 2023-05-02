@@ -20,12 +20,13 @@ $ git clone https://github.com/orlandorode97/gofetch.git
     --> Building gofetch binary for linux:amd64
     --> gofetch for linux:amd64 built at /usr/home/orlandoromo/go/src/gofetch
     ```
-6. The previous command generates the binary `gofetch` at the root of the project. Copy it to the folder under `/usr/local/bin` either on `linux` or `mac`:
+5. The previous command generates the binary `gofetch` at the root of the project. Copy it to the folder under `/usr/local/bin` either on `linux` or `mac`:
 ```sh
 $ sudo cp gofetch /usr/local/bin
 ```
+For Windows users it generates the binary `gofetch.exe` at the root of the project. Make a binary folder to place it with `make C:\bin`, move `gofetch.exe` to the created folder `move gofetch.exe C:\bin.`, add it to PATH with `setx PATH "C:\bin\;%PATH%"` and restart your terminal.
 
-7. Go for it (animation created with [vsh](https://github.com/charmbracelet/vhs)):
+6. Go for it (animation created with [vsh](https://github.com/charmbracelet/vhs)):
 <img width="600" alt="Screen Shot 2022-02-14 at 15 43 03" src="gofetch.gif">
 
 # Contributions
