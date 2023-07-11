@@ -10,7 +10,6 @@ GOARCH=$(shell go env GOARCH)
 
 export GOBIN := $(BIN_DIR)
 
-
 ## help: Get more info on make commands.
 help: Makefile
 	@echo " Choose a command run in "$(PROJECTNAME)":"

@@ -47,7 +47,6 @@ func initColorFields() {
 
 	fields = map[string]string{
 		"GetOSVersion":          "OS",
-		"GetName":               "name",
 		"GetKernelVersion":      "kernel",
 		"GetUptime":             "uptime",
 		"GetNumberPackages":     "packages",
