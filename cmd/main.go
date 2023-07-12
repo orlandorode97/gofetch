@@ -18,7 +18,7 @@ func main() {
 			newVersionCommand(),
 		},
 		Name:   "gofetch",
-		Usage:  "fetches os information",
+		Usage:  "fetches os information  asdas",
 		Action: Fetch,
 	}
 	if err := gofetch.Run(os.Args); err != nil {
