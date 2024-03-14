@@ -62,14 +62,14 @@ func initColorFields() {
 }
 
 func Fetch(in Fetcher) {
-	waitGroup := sync.WaitGroup{}
+	w := sync.WaitGroup{}
 	var m sync.Mutex
 	inType, inValue := reflect.TypeOf(in), reflect.ValueOf(in)
 	outputFields := make(map[string]string, 0)
 	for i := 0; i < inType.NumMethod(); i++ {
 		function := inType.Method(i)
-		waitGroup.Add(1)
-		go func(f reflect.Method, w *sync.WaitGroup) {
+		w.Add(1)
+		go func(f reflect.Method) {
 			defer w.Done()
 			result := f.Func.Call([]reflect.Value{inValue})
 			output, _ := result[0].Interface().(string)
@@ -77,10 +77,10 @@ func Fetch(in Fetcher) {
 			name := fields[f.Name]
 			outputFields[name] = colorOutput(output, name)
 			m.Unlock()
-		}(function, &waitGroup)
+		}(function)
 	}
 
-	waitGroup.Wait()
+	w.Wait()
 
 	dots := fmt.Sprintf("%s  	%s  	%s  	%s  	%s  	%s  	%s  	\n",
 		Red.Sprint("○"),
