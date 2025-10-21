@@ -21,9 +21,9 @@ help: Makefile
 build:
 	@echo "--> Building gofetch binary for $(GOOS):$(GOARCH)"
 	@if [ $(GOOS) = "windows" ]; then\
-	  env go build -ldflags $(LDFLAGS) -o gofetch.exe ./cmd/;\
+	  env CGO_ENABLED=1 go build -ldflags $(LDFLAGS) -o gofetch.exe ./cmd/;\
   else\
-	  env go build -ldflags $(LDFLAGS) -o gofetch ./cmd/;\
+	  env CGO_ENABLED=1 go build -ldflags $(LDFLAGS) -o gofetch ./cmd/;\
   fi
 	@echo "--> gofetch for $(GOOS):$(GOARCH) built at $(PWD_PROJECT)"
 
@@ -43,6 +43,3 @@ setup-linter:
 test: linter
 	@echo "Running all tests"
 	go test -v ./...
-
-.PHONY: setup-linter
-
