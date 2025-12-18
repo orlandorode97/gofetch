@@ -1,4 +1,4 @@
-#gofetch
+# gofetch
 
 gofetch is an alternative neofetch, screenfetch, and pfetch CLI tool that retrieves the current operative system information.
 
