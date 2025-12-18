@@ -15,7 +15,7 @@ func TestGetMemoryUsage(t *testing.T) {
 	}{
 		{
 			Desc:     "success - received memory usage",
-			Expected: "6656 MB / 16384 MB",
+			Expected: "6656 MB / 16384 MB (40%)",
 			VirtualMemory: func() (*mem.VirtualMemoryStat, error) {
 				return &mem.VirtualMemoryStat{
 					Total: 0x400000000, // 16 GB
